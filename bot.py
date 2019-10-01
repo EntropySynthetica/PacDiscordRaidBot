@@ -45,6 +45,8 @@ async def on_message(message):
         print('Trial title = ' + trial_title)
 
         title_header = "Pac's Raid Signup Bot has posted " + trial_title + "\n"
+
+        instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\n")
         
         tank_header = ""
         for i in range(tank_count):
@@ -61,7 +63,7 @@ async def on_message(message):
             i = i + 1
             dps_header = dps_header + "DPS" + str(i) + "=Open\n"
 
-        response = title_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header
+        response = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header
 
 
         await message.channel.send(response)
