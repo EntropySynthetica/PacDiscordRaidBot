@@ -85,46 +85,98 @@ async def on_message(message):
 async def on_reaction_add(reaction, user):
     if user == client.user:
         return
+
     else:
-        print('Emoji = ' + str(reaction.emoji))
-        print('Emoji Channel ID = ' + str(reaction.message.channel.id))
-        print('Emoji Message ID = ' + str(reaction.message.id))
-        print('Emoji User = ' + str(user))
-        print('Emoji User Nick = ' + str(user.nick))
-        print('Emoji User ID = ' + str(user.id))
-
-        if str(reaction.emoji) == tank_emoji:
-            chosen_role = "tank"
-        elif str(reaction.emoji) == heal_emoji:
-            chosen_role = "healer"
-        elif str(reaction.emoji) == magdps_emoji:
-            chosen_role = "magdps"
-        elif str(reaction.emoji) == stamdps_emoji:
-            chosen_role = "stamdps"
-        else:
-            chosen_role = "None"
-
-        print("Chosen Role = " + chosen_role)
-
         message = await client.get_channel(reaction.message.channel.id).fetch_message(reaction.message.id)
 
-        print(message)
-        edited_message = (f'Message edited by <@{user.id}>')
-        #await message.edit(content=edited_message)
+        if message.content.startswith('Pac\'s Raid Signup Bot has posted'):
+            if str(reaction.emoji) == tank_emoji:
+                chosen_role = "tank"
+            elif str(reaction.emoji) == heal_emoji:
+                chosen_role = "healer"
+            elif str(reaction.emoji) == magdps_emoji:
+                chosen_role = "magdps"
+            elif str(reaction.emoji) == stamdps_emoji:
+                chosen_role = "stamdps"
+            else:
+                chosen_role = "None"
+                return
+
+            print('Emoji = ' + str(reaction.emoji))
+            print('Emoji Channel ID = ' + str(reaction.message.channel.id))
+            print('Emoji Message ID = ' + str(reaction.message.id))
+            print('Emoji User = ' + str(user))
+            print('Emoji User Nick = ' + str(user.nick))
+            print('Emoji User ID = ' + str(user.id))
+            print("Chosen Role = " + chosen_role)
+
+            title_rex = r'has\sposted\s(.*)'
+            trial_title = re.findall(title_rex, message.content)
+
+            title_header = "Pac's Raid Signup Bot has posted " + trial_title[0] + "\n"
+
+            instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\n")
+
+            #Parse Tanks already signed up and add to the next open spot if user clicked the tank role. 
+            tank_rex = r'Tank\d\=(.*)'
+            tanks_signedup = re.findall(tank_rex, message.content)
+
+            tankspotfound = False
+            for index, value in enumerate(tanks_signedup):
+                if (value == "Open") and (tankspotfound == False) and (chosen_role == "tank"):
+                    usersigned_up = (f'<@{user.id}> {tank_emoji}')
+                    tanks_signedup[index] = usersigned_up
+                    tankspotfound = True
+
+            tank_header = ""
+            for index, value in enumerate(tanks_signedup):
+                index = index + 1
+                tank_header = tank_header + "Tank" + str(index) + "=" + value +"\n"
+
+            #Parse Healers already signed up and add to the next open spot if user clicked the Healer role. 
+            healer_rex = r'Healer\d\=(.*)'
+            healer_signedup = re.findall(healer_rex, message.content)
+
+            healerspotfound = False
+            for index, value in enumerate(healer_signedup):
+                if (value == "Open") and (healerspotfound == False) and (chosen_role == "healer"):
+                    usersigned_up = (f'<@{user.id}> {heal_emoji}')
+                    healer_signedup[index] = usersigned_up
+                    healerspotfound = True
+
+            healer_header = ""
+            for index, value in enumerate(healer_signedup):
+                index = index + 1
+                healer_header = healer_header + "Healer" + str(index) + "=" + value +"\n"
+
+            #Parse DPS already signed up and add to the next open spot if user clicked the Stam or Mag DPS role. 
+            DPS_rex = r'DPS\d\=(.*)'
+            DPS_signedup = re.findall(DPS_rex, message.content)
+
+            DPSspotfound = False
+            for index, value in enumerate(DPS_signedup):
+                if (value == "Open") and (DPSspotfound == False) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
+                    if chosen_role == "magdps":
+                        dps_emoji = magdps_emoji
+                    elif chosen_role == "stamdps":
+                        dps_emoji = stamdps_emoji
+
+                    usersigned_up = (f'<@{user.id}> {dps_emoji}')
+                    DPS_signedup[index] = usersigned_up
+                    DPSspotfound = True
+
+            DPS_header = ""
+            for index, value in enumerate(DPS_signedup):
+                index = index + 1
+                DPS_header = DPS_header + "DPS" + str(index) + "=" + value +"\n"
 
 
 
+            edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + DPS_header + "\n"
+            await message.edit(content=edited_message)
 
+        else:
+            return    
 
-# bot = commands.Bot(command_prefix='!')
-
-# @bot.command(name='ping', help='Replies with Pong')
-# async def ping(ctx):
-
-#     response = "Pong #1234"
-#     await ctx.send(response)
-
-
-#bot.run(token)
 
 client.run(token)
