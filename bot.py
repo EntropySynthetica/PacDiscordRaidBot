@@ -68,13 +68,13 @@ async def on_message(message):
 
         await message.channel.send(response)
 
-        print(f'{message.channel} is Message Channel')
-        print(f'{message.author} is Message Author')
+        #print(f'{message.channel} is Message Channel')
+        #print(f'{message.author} is Message Author')
 
         async for last_message in message.channel.history(limit=1):
             #print(last_message)
-            print(last_message.content)
-            print('Last Message ID = ' + str(last_message.id))
+            #print(last_message.content)
+            #print('Last Message ID = ' + str(last_message.id))
 
             default_reactions = [tank_emoji,heal_emoji,stamdps_emoji,magdps_emoji]
             for emoji in default_reactions:
@@ -88,6 +88,8 @@ async def on_reaction_add(reaction, user):
 
     else:
         message = await client.get_channel(reaction.message.channel.id).fetch_message(reaction.message.id)
+
+        print(message.content)
 
         if message.content.startswith('Pac\'s Raid Signup Bot has posted'):
             if str(reaction.emoji) == tank_emoji:
@@ -117,10 +119,30 @@ async def on_reaction_add(reaction, user):
 
             instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\n")
 
-            #Parse Tanks already signed up and add to the next open spot if user clicked the tank role. 
+            #Parse Roster of folks already signed up. 
             tank_rex = r'Tank\d\=(.*)'
             tanks_signedup = re.findall(tank_rex, message.content)
 
+            healer_rex = r'Healer\d\=(.*)'
+            healer_signedup = re.findall(healer_rex, message.content)
+
+            DPS_rex = r'DPS\d\=(.*)'
+            DPS_signedup = re.findall(DPS_rex, message.content)
+
+            #Check if user is already signed up, if so lets remove their old entry to prevent multiple signups. 
+            for index, value in enumerate(tanks_signedup):
+                if str(user.id) in value:
+                    tanks_signedup[index] = "Open"
+
+            for index, value in enumerate(healer_signedup):
+                if str(user.id) in value:
+                    healer_signedup[index] = "Open"
+
+            for index, value in enumerate(DPS_signedup):
+                if str(user.id) in value:
+                    DPS_signedup[index] = "Open"
+
+            #Add user to the Tank roster if they clicked tank emoji
             tankspotfound = False
             for index, value in enumerate(tanks_signedup):
                 if (value == "Open") and (tankspotfound == False) and (chosen_role == "tank"):
@@ -133,10 +155,7 @@ async def on_reaction_add(reaction, user):
                 index = index + 1
                 tank_header = tank_header + "Tank" + str(index) + "=" + value +"\n"
 
-            #Parse Healers already signed up and add to the next open spot if user clicked the Healer role. 
-            healer_rex = r'Healer\d\=(.*)'
-            healer_signedup = re.findall(healer_rex, message.content)
-
+            #Add user to the healer roster if they clicked healer emoji
             healerspotfound = False
             for index, value in enumerate(healer_signedup):
                 if (value == "Open") and (healerspotfound == False) and (chosen_role == "healer"):
@@ -149,10 +168,7 @@ async def on_reaction_add(reaction, user):
                 index = index + 1
                 healer_header = healer_header + "Healer" + str(index) + "=" + value +"\n"
 
-            #Parse DPS already signed up and add to the next open spot if user clicked the Stam or Mag DPS role. 
-            DPS_rex = r'DPS\d\=(.*)'
-            DPS_signedup = re.findall(DPS_rex, message.content)
-
+            #Add user to the DPS roster if they clicked stam or mag DPS emoji
             DPSspotfound = False
             for index, value in enumerate(DPS_signedup):
                 if (value == "Open") and (DPSspotfound == False) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
