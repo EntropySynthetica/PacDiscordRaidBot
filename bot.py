@@ -91,11 +91,24 @@ async def on_reaction_add(reaction, user):
         print('Emoji User Nick = ' + str(user.nick))
         print('Emoji User ID = ' + str(user.id))
 
+        if str(reaction.emoji) == tank_emoji:
+            chosen_role = "tank"
+        elif str(reaction.emoji) == heal_emoji:
+            chosen_role = "healer"
+        elif str(reaction.emoji) == magdps_emoji:
+            chosen_role = "magdps"
+        elif str(reaction.emoji) == stamdps_emoji:
+            chosen_role = "stamdps"
+        else:
+            chosen_role = "None"
+
+        print("Chosen Role = " + chosen_role)
+
         message = await client.get_channel(reaction.message.channel.id).fetch_message(reaction.message.id)
 
         print(message)
         edited_message = (f'Message edited by <@{user.id}>')
-        await message.edit(content=edited_message)
+        #await message.edit(content=edited_message)
 
 
 
