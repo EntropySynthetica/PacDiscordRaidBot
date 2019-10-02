@@ -9,10 +9,15 @@ token = os.getenv('DISCORD_TOKEN')
 
 client = discord.Client()
 
-tank_emoji = '<:tank:628405354996432936>'
-heal_emoji = '<:healer:628405417042509899>'
-magdps_emoji = '<:magdps:628405402358251520>'
-stamdps_emoji = '<:stamdps:628405386168369153>'
+# tank_emoji = '<:tank:628405354996432936>'
+# heal_emoji = '<:healer:628405417042509899>'
+# magdps_emoji = '<:magdps:628405402358251520>'
+# stamdps_emoji = '<:stamdps:628405386168369153>'
+
+tank_emoji = '<:tank:628734674402934804>'
+heal_emoji = '<:healer:628734751024480287>'
+magdps_emoji = '<:magdps:628734734637465642>'
+stamdps_emoji = '<:stamdps:628734719831310337>'
 
 @client.event
 async def on_ready():
@@ -82,12 +87,13 @@ async def on_message(message):
 
 
 @client.event
-async def on_reaction_add(reaction, user):
-    if user == client.user:
+#async def on_reaction_add(reaction, user):
+async def on_raw_reaction_add(reaction):
+    if reaction.user_id == client.user:
         return
 
     else:
-        message = await client.get_channel(reaction.message.channel.id).fetch_message(reaction.message.id)
+        message = await client.get_channel(reaction.channel_id).fetch_message(reaction.message_id)
 
         print(message.content)
 
@@ -106,11 +112,9 @@ async def on_reaction_add(reaction, user):
 
             #Debuging Print statements
             print('Emoji = ' + str(reaction.emoji))
-            print('Emoji Channel ID = ' + str(reaction.message.channel.id))
-            print('Emoji Message ID = ' + str(reaction.message.id))
-            print('Emoji User = ' + str(user))
-            print('Emoji User Nick = ' + str(user.nick))
-            print('Emoji User ID = ' + str(user.id))
+            print('Emoji Channel ID = ' + str(reaction.channel_id))
+            print('Emoji Message ID = ' + str(reaction.message_id))
+            print('Emoji User ID = ' + str(reaction.user_id))
             print("Chosen Role = " + chosen_role)
 
             title_rex = r'has\sposted\s(.*)'
@@ -135,15 +139,15 @@ async def on_reaction_add(reaction, user):
 
             #Check if user is already signed up, if so lets remove their old entry to prevent multiple signups. 
             for index, value in enumerate(tanks_signedup):
-                if str(user.id) in value:
+                if str(reaction.user_id) in value:
                     tanks_signedup[index] = "Open"
 
             for index, value in enumerate(healer_signedup):
-                if str(user.id) in value:
+                if str(reaction.user_id) in value:
                     healer_signedup[index] = "Open"
 
             for index, value in enumerate(DPS_signedup):
-                if str(user.id) in value:
+                if str(reaction.user_id) in value:
                     DPS_signedup[index] = "Open"
 
             #Check if Rosters are full
@@ -166,7 +170,7 @@ async def on_reaction_add(reaction, user):
             tankspotfound = False
             for index, value in enumerate(tanks_signedup):
                 if (value == "Open") and (tankspotfound == False) and (chosen_role == "tank"):
-                    usersigned_up = (f'<@{user.id}> {tank_emoji}')
+                    usersigned_up = (f'<@{reaction.user_id}> {tank_emoji}')
                     tanks_signedup[index] = usersigned_up
                     tankspotfound = True
 
@@ -176,14 +180,14 @@ async def on_reaction_add(reaction, user):
                 tank_header = tank_header + "Tank" + str(index) + "=" + value +"\n"
             
             if (tankrosterfull == True) and (chosen_role == "tank"):
-                backup_signedup.append(f'<@{user.id}> {reaction.emoji}')
+                backup_signedup.append(f'<@{reaction.user_id}> {reaction.emoji}')
 
 
             #Add user to the healer roster if they clicked healer emoji
             healerspotfound = False
             for index, value in enumerate(healer_signedup):
                 if (value == "Open") and (healerspotfound == False) and (chosen_role == "healer"):
-                    usersigned_up = (f'<@{user.id}> {heal_emoji}')
+                    usersigned_up = (f'<@{reaction.user_id}> {heal_emoji}')
                     healer_signedup[index] = usersigned_up
                     healerspotfound = True
 
@@ -193,7 +197,7 @@ async def on_reaction_add(reaction, user):
                 healer_header = healer_header + "Healer" + str(index) + "=" + value +"\n"
 
             if (healerrosterfull == True) and (chosen_role == "healer"):
-                backup_signedup.append(f'<@{user.id}> {reaction.emoji}')
+                backup_signedup.append(f'<@{reaction.user_id}> {reaction.emoji}')
 
             #Add user to the DPS roster if they clicked stam or mag DPS emoji
             DPSspotfound = False
@@ -204,7 +208,7 @@ async def on_reaction_add(reaction, user):
                     elif chosen_role == "stamdps":
                         dps_emoji = stamdps_emoji
 
-                    usersigned_up = (f'<@{user.id}> {dps_emoji}')
+                    usersigned_up = (f'<@{reaction.user_id}> {dps_emoji}')
                     DPS_signedup[index] = usersigned_up
                     DPSspotfound = True
 
@@ -214,7 +218,7 @@ async def on_reaction_add(reaction, user):
                 DPS_header = DPS_header + "DPS" + str(index) + "=" + value +"\n"
 
             if (DPSrosterfull == True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
-                backup_signedup.append(f'<@{user.id}> {reaction.emoji}')
+                backup_signedup.append(f'<@{reaction.user_id}> {reaction.emoji}')
 
             #Add users to Backup Roster if something was full.
             backup_header = ""
