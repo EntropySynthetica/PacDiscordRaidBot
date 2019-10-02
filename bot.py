@@ -95,7 +95,7 @@ async def on_raw_reaction_add(reaction):
     else:
         message = await client.get_channel(reaction.channel_id).fetch_message(reaction.message_id)
 
-        print(message.content)
+        #print(message.content)
 
         if message.content.startswith('Pac\'s Raid Signup Bot has posted'):
             if str(reaction.emoji) == tank_emoji:
@@ -149,6 +149,10 @@ async def on_raw_reaction_add(reaction):
             for index, value in enumerate(DPS_signedup):
                 if str(reaction.user_id) in value:
                     DPS_signedup[index] = "Open"
+
+            for index, value in enumerate(backup_signedup):
+                if str(reaction.user_id) in value:
+                    del backup_signedup[index]
 
             #Check if Rosters are full
             if "Open" not in tanks_signedup:
