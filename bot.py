@@ -18,6 +18,7 @@ tank_emoji = '<:tank:628734674402934804>'
 heal_emoji = '<:healer:628734751024480287>'
 magdps_emoji = '<:magdps:628734734637465642>'
 stamdps_emoji = '<:stamdps:628734719831310337>'
+unsignup_emoji = '🛑'
 
 @client.event
 async def on_ready():
@@ -51,7 +52,7 @@ async def on_message(message):
 
         title_header = "Pac's Raid Signup Bot has posted " + trial_title + "\n"
 
-        instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\n")
+        instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\nUnSignup = {unsignup_emoji}\n")
         
         tank_header = ""
         for i in range(tank_count):
@@ -81,7 +82,7 @@ async def on_message(message):
             #print(last_message.content)
             #print('Last Message ID = ' + str(last_message.id))
 
-            default_reactions = [tank_emoji,heal_emoji,stamdps_emoji,magdps_emoji]
+            default_reactions = [tank_emoji,heal_emoji,stamdps_emoji,magdps_emoji,unsignup_emoji]
             for emoji in default_reactions:
                 await last_message.add_reaction(emoji)
 
@@ -89,7 +90,7 @@ async def on_message(message):
 @client.event
 #async def on_reaction_add(reaction, user):
 async def on_raw_reaction_add(reaction):
-    if reaction.user_id == client.user:
+    if reaction.user_id == client.user.id:
         return
 
     else:
@@ -106,7 +107,10 @@ async def on_raw_reaction_add(reaction):
                 chosen_role = "magdps"
             elif str(reaction.emoji) == stamdps_emoji:
                 chosen_role = "stamdps"
+            elif str(reaction.emoji) == unsignup_emoji:
+                chosen_role = "unsignup"
             else:
+                print('Emoji = ' + str(reaction.emoji))
                 chosen_role = "None"
                 return
 
@@ -115,6 +119,7 @@ async def on_raw_reaction_add(reaction):
             print('Emoji Channel ID = ' + str(reaction.channel_id))
             print('Emoji Message ID = ' + str(reaction.message_id))
             print('Emoji User ID = ' + str(reaction.user_id))
+            print('Client User = ' + str(client.user.id))
             print("Chosen Role = " + chosen_role)
 
             title_rex = r'has\sposted\s(.*)'
@@ -122,8 +127,8 @@ async def on_raw_reaction_add(reaction):
 
             title_header = "Pac's Raid Signup Bot has posted " + trial_title[0] + "\n"
 
-            instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\n")
-
+            instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\nUnSignup = {unsignup_emoji}\n")
+  
             #Parse Roster of folks already signed up. 
             tank_rex = r'Tank\d\=(.*)'
             tanks_signedup = re.findall(tank_rex, message.content)
