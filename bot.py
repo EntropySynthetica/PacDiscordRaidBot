@@ -9,21 +9,23 @@ token = os.getenv('DISCORD_TOKEN')
 
 client = discord.Client()
 
-# tank_emoji = '<:tank:628405354996432936>'
-# heal_emoji = '<:healer:628405417042509899>'
-# magdps_emoji = '<:magdps:628405402358251520>'
-# stamdps_emoji = '<:stamdps:628405386168369153>'
+tank_emoji = '<:tank:628405354996432936>'
+heal_emoji = '<:healer:628405417042509899>'
+magdps_emoji = '<:magdps:628405402358251520>'
+stamdps_emoji = '<:stamdps:628405386168369153>'
 
-tank_emoji = '<:tank:628734674402934804>'
-heal_emoji = '<:healer:628734751024480287>'
-magdps_emoji = '<:magdps:628734734637465642>'
-stamdps_emoji = '<:stamdps:628734719831310337>'
+# tank_emoji = '<:tank:628734674402934804>'
+# heal_emoji = '<:healer:628734751024480287>'
+# magdps_emoji = '<:magdps:628734734637465642>'
+# stamdps_emoji = '<:stamdps:628734719831310337>'
 unsignup_emoji = '🛑'
 
+#Connect the Client to Discord and report back.
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
 
+#Watch for the !NewTrial string at the begining.
 @client.event
 async def on_message(message):
     if message.author == client.user:
@@ -31,6 +33,8 @@ async def on_message(message):
 
     if message.content.startswith('!NewTrial'):
 
+
+        #Regular expression to parse out the arguments after the command.  If no arguments were passed we create a default trial of 2 2 8. 
         NewTrialRex = r'\!NewTrial\s(?P<tank>\d)\s(?P<healer>\d)\s(?P<DPS>\d)\s(?P<Title>.*)'
         NewTrialVars = re.search(NewTrialRex, message.content)
 
@@ -45,11 +49,13 @@ async def on_message(message):
             dps_count = 8
             trial_title = "New Trial"
 
+        #Debug block to see what vars were passed. 
         print('Tank Count = ' + str(tank_count))
         print('Healer Count = ' + str(healer_count))
         print('DPS Count = ' + str(dps_count))
         print('Trial title = ' + trial_title)
 
+        #Create the intial trial post. 
         title_header = "Pac's Raid Signup Bot has posted " + trial_title + "\n"
 
         instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\nUnSignup = {unsignup_emoji}\n")
@@ -71,12 +77,11 @@ async def on_message(message):
 
         response = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header
 
-
+        #Post the Message in the same discord channel the command was run from. 
         await message.channel.send(response)
 
-        #print(f'{message.channel} is Message Channel')
-        #print(f'{message.author} is Message Author')
 
+        #Grab the last message posted to discord. That should be what our bot just posted. We need it's ID so we can add the reaction emotes.
         async for last_message in message.channel.history(limit=1):
             #print(last_message)
             #print(last_message.content)
@@ -86,9 +91,8 @@ async def on_message(message):
             for emoji in default_reactions:
                 await last_message.add_reaction(emoji)
 
-
+#Watch for a reaction on our trial post. 
 @client.event
-#async def on_reaction_add(reaction, user):
 async def on_raw_reaction_add(reaction):
     if reaction.user_id == client.user.id:
         return
@@ -96,8 +100,8 @@ async def on_raw_reaction_add(reaction):
     else:
         message = await client.get_channel(reaction.channel_id).fetch_message(reaction.message_id)
 
-        #print(message.content)
 
+        #Figure out what role emoje was clicked
         if message.content.startswith('Pac\'s Raid Signup Bot has posted'):
             if str(reaction.emoji) == tank_emoji:
                 chosen_role = "tank"
@@ -122,6 +126,7 @@ async def on_raw_reaction_add(reaction):
             print('Client User = ' + str(client.user.id))
             print("Chosen Role = " + chosen_role)
 
+            #Parse the title of the trial. 
             title_rex = r'has\sposted\s(.*)'
             trial_title = re.findall(title_rex, message.content)
 
@@ -188,6 +193,7 @@ async def on_raw_reaction_add(reaction):
                 index = index + 1
                 tank_header = tank_header + "Tank" + str(index) + "=" + value +"\n"
             
+            #If the roster is full lets add them to the backup list.
             if (tankrosterfull == True) and (chosen_role == "tank"):
                 backup_signedup.append(f'<@{reaction.user_id}> {reaction.emoji}')
 
@@ -237,6 +243,7 @@ async def on_raw_reaction_add(reaction):
 
 
             edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + DPS_header + "\n" + backup_header
+            #Update our post with the new roster
             await message.edit(content=edited_message)
 
         else:
