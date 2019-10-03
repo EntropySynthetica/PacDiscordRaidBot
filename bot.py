@@ -5,19 +5,23 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
+
+#Load Prod Vars
 token = os.getenv('DISCORD_TOKEN')
+tank_emoji = os.getenv('TANK_EMOJI')
+heal_emoji = os.getenv('HEAL_EMOJI')
+magdps_emoji = os.getenv('MAGDPS_EMOJI')
+stamdps_emoji = os.getenv('STAMDPS_EMOJI')
+
+#Load Dev Vars, Only Uncomment this when referencing a testing server. 
+# token = os.getenv('DISCORD_TOKEN_DEV')
+# tank_emoji = os.getenv('TANK_EMOJI_DEV')
+# heal_emoji = os.getenv('HEAL_EMOJI_DEV')
+# magdps_emoji = os.getenv('MAGDPS_EMOJI_DEV')
+# stamdps_emoji = os.getenv('STAMDPS_EMOJI_DEV')
 
 client = discord.Client()
 
-tank_emoji = '<:tank:628405354996432936>'
-heal_emoji = '<:healer:628405417042509899>'
-magdps_emoji = '<:magdps:628405402358251520>'
-stamdps_emoji = '<:stamdps:628405386168369153>'
-
-# tank_emoji = '<:tank:628734674402934804>'
-# heal_emoji = '<:healer:628734751024480287>'
-# magdps_emoji = '<:magdps:628734734637465642>'
-# stamdps_emoji = '<:stamdps:628734719831310337>'
 unsignup_emoji = '🛑'
 
 #Connect the Client to Discord and report back.
