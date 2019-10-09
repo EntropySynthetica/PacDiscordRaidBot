@@ -7,18 +7,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 #Load Prod Vars
-token = os.getenv('DISCORD_TOKEN')
-tank_emoji = os.getenv('TANK_EMOJI')
-heal_emoji = os.getenv('HEAL_EMOJI')
-magdps_emoji = os.getenv('MAGDPS_EMOJI')
-stamdps_emoji = os.getenv('STAMDPS_EMOJI')
+# token = os.getenv('DISCORD_TOKEN')
+# tank_emoji = os.getenv('TANK_EMOJI')
+# heal_emoji = os.getenv('HEAL_EMOJI')
+# magdps_emoji = os.getenv('MAGDPS_EMOJI')
+# stamdps_emoji = os.getenv('STAMDPS_EMOJI')
 
 #Load Dev Vars, Only Uncomment this when referencing a testing server. 
-# token = os.getenv('DISCORD_TOKEN_DEV')
-# tank_emoji = os.getenv('TANK_EMOJI_DEV')
-# heal_emoji = os.getenv('HEAL_EMOJI_DEV')
-# magdps_emoji = os.getenv('MAGDPS_EMOJI_DEV')
-# stamdps_emoji = os.getenv('STAMDPS_EMOJI_DEV')
+token = os.getenv('DISCORD_TOKEN_DEV')
+tank_emoji = os.getenv('TANK_EMOJI_DEV')
+heal_emoji = os.getenv('HEAL_EMOJI_DEV')
+magdps_emoji = os.getenv('MAGDPS_EMOJI_DEV')
+stamdps_emoji = os.getenv('STAMDPS_EMOJI_DEV')
 
 client = discord.Client()
 
