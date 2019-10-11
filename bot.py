@@ -20,6 +20,8 @@ heal_emoji = os.getenv('HEAL_EMOJI_DEV')
 magdps_emoji = os.getenv('MAGDPS_EMOJI_DEV')
 stamdps_emoji = os.getenv('STAMDPS_EMOJI_DEV')
 
+welcome_channel_id = 628282630508511235
+
 client = discord.Client()
 
 unsignup_emoji = '🛑'
@@ -252,6 +254,22 @@ async def on_raw_reaction_add(reaction):
 
         else:
             return    
+
+#Print Welcome Message and Assign Citizen Role when someone joins the discord. 
+@client.event
+async def on_member_join(member):
+    print(member.name + " has joined " + str(member.guild))
+
+    role = discord.utils.get(member.guild.roles, name="Citizen")
+    #print(str(role) + " role")
+
+    welcome_message = "This one welcomes " + member.name + " to Pacrooti's Hirelings.  Please change your discord nickname to match your ESO @ name."
+
+    await member.add_roles(role)
+
+    channel = client.get_channel(welcome_channel_id)
+
+    await channel.send(welcome_message)
 
 
 client.run(token)
