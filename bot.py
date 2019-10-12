@@ -6,21 +6,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-#Load Prod Vars
-# token = os.getenv('DISCORD_TOKEN')
-# tank_emoji = os.getenv('TANK_EMOJI')
-# heal_emoji = os.getenv('HEAL_EMOJI')
-# magdps_emoji = os.getenv('MAGDPS_EMOJI')
-# stamdps_emoji = os.getenv('STAMDPS_EMOJI')
-
-#Load Dev Vars, Only Uncomment this when referencing a testing server. 
-token = os.getenv('DISCORD_TOKEN_DEV')
-tank_emoji = os.getenv('TANK_EMOJI_DEV')
-heal_emoji = os.getenv('HEAL_EMOJI_DEV')
-magdps_emoji = os.getenv('MAGDPS_EMOJI_DEV')
-stamdps_emoji = os.getenv('STAMDPS_EMOJI_DEV')
-
-welcome_channel_id = 628282630508511235
+#Load Vars from .env
+token = os.getenv('DISCORD_TOKEN')
+tank_emoji = os.getenv('TANK_EMOJI')
+heal_emoji = os.getenv('HEAL_EMOJI')
+magdps_emoji = os.getenv('MAGDPS_EMOJI')
+stamdps_emoji = os.getenv('STAMDPS_EMOJI')
+welcome_channel_name = os.getenv('WELCOME_CHANNEL_NAME')
+welcome_role_name = os.getenv('WELCOME_ROLE_NAME')
 
 client = discord.Client()
 
@@ -260,15 +253,12 @@ async def on_raw_reaction_add(reaction):
 async def on_member_join(member):
     print(member.name + " has joined " + str(member.guild))
 
-    role = discord.utils.get(member.guild.roles, name="Citizen")
-    #print(str(role) + " role")
+    role = discord.utils.get(member.guild.roles, name=welcome_role_name)
+    channel = discord.utils.get(client.get_all_channels(), name=welcome_channel_name)
 
-    welcome_message = "This one welcomes " + member.name + " to Pacrooti's Hirelings.  Please change your discord nickname to match your ESO @ name."
+    welcome_message = "This one welcomes " + member.name + " to " + str(member.guild) + ".  Please change your discord nickname to match your ESO @ name."
 
     await member.add_roles(role)
-
-    channel = client.get_channel(welcome_channel_id)
-
     await channel.send(welcome_message)
 
 
