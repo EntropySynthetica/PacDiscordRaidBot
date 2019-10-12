@@ -3,6 +3,7 @@ import discord
 import re
 from discord.ext import commands
 from dotenv import load_dotenv
+from random import randint
 
 load_dotenv()
 
@@ -74,7 +75,12 @@ async def on_message(message):
             i = i + 1
             dps_header = dps_header + "DPS" + str(i) + "=Open\n"
 
-        response = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header
+        # Assign the Trial an ID number so we can reference it later. 
+        trialid = ''.join(["{}".format(randint(0, 9)) for num in range(0, 6)])
+
+        trialid_header = ("TrialID=" + str(trialid)) 
+
+        response = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header + "\n" + trialid_header
 
         #Post the Message in the same discord channel the command was run from. 
         await message.channel.send(response)
@@ -145,6 +151,10 @@ async def on_raw_reaction_add(reaction):
 
             backup_rex = r'Backup\d\=(.*)'
             backup_signedup = re.findall(backup_rex, message.content)
+
+            #Parse the Trial ID
+            trialid_rex = r'TrialID\=(\d{6})'
+            trialid = re.findall(trialid_rex, message.content)
 
             #Check if user is already signed up, if so lets remove their old entry to prevent multiple signups. 
             for index, value in enumerate(tanks_signedup):
@@ -240,8 +250,11 @@ async def on_raw_reaction_add(reaction):
                 index = index + 1
                 backup_header = backup_header + "Backup" + str(index) + "=" + value +"\n"
 
+            #Add in the TrialID
+            trialid_header = ("TrialID=" + str(trialid[0])) 
 
-            edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + DPS_header + "\n" + backup_header
+
+            edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + DPS_header + "\n" + backup_header + "\n" + trialid_header
             #Update our post with the new roster
             await message.edit(content=edited_message)
 
