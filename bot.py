@@ -256,7 +256,9 @@ async def on_member_join(member):
     role = discord.utils.get(member.guild.roles, name=welcome_role_name)
     channel = discord.utils.get(client.get_all_channels(), name=welcome_channel_name)
 
-    welcome_message = "This one welcomes " + member.name + " to " + str(member.guild) + ".  Please change your discord nickname to match your ESO @ name."
+    welcome_member = f'<@{member.id}>'
+
+    welcome_message = "This one welcomes " + welcome_member + " to " + str(member.guild) + ".  Please change your discord nickname to match your ESO @ name."
 
     await member.add_roles(role)
     await channel.send(welcome_message)
