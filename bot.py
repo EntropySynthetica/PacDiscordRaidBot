@@ -98,7 +98,9 @@ async def on_message(message):
 
     elif message.content.startswith('!AddtoTrial'):
 
-        AddtoTrial_rex = r'\!AddtoTrial\s(?P<trialid>\d{6})\s(?P<member_to_signup>.*?)\s(?P<role_emote>.*?)(?:\s|$)'
+        print(str(message.content))
+
+        AddtoTrial_rex = r'\!AddtoTrial\s(?P<trialid>\d{6})\s*(?P<member_to_signup>\<\@.*?\>)\s*(?P<role_emote>.*)(?:\s|$)'
         AddtoTrialVars = re.search(AddtoTrial_rex, message.content)
 
         if AddtoTrialVars:
