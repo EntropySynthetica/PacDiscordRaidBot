@@ -65,6 +65,10 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     trialid_rex = r'TrialID\=(\d{6})'
     trialid = re.findall(trialid_rex, trial_message.content)
 
+    if not trialid:
+        trialid = []
+        trialid.append(''.join(["{}".format(randint(0, 9)) for num in range(0, 6)]))
+
     #Check if user is already signed up, if so lets remove their old entry to prevent multiple signups. 
     for index, value in enumerate(tanks_signedup):
         if str(member_to_signup) in value:
