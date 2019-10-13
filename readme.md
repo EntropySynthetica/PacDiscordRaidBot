@@ -3,6 +3,7 @@
 Pac's Discord Raid Signup Bot is intended to create and allow people to signup for Elder Scrolls Online Raids from a Discord Channel. I created this for the Guild Pacrooti's Hirelings in ESO.
 
 ## Bot Usage
+
 To create a new event use the command `!NewTrial` followed by the number of open Tank spots, healer spots, DPS spots, and the Raid title. 
 
 For example, to create a Vet Atherian Archvie trial signup for 2 Tanks, 2 Healers and 8 DPS you would type the following,
@@ -14,6 +15,10 @@ If you type `!NewTrial` with no arguments it will default to a 2 tank, 2 healer,
 To sign up for a spot someone simply needs to click the reaction emoji of the role they want.  If they click multiple emoji the system will sign them up for the last role that they clicked.  The stop sign emoji will remove them from the signup.  
 
 To delete a signup just delete the post via discord.  This may require admin perms on the channel. 
+
+Someone can be manually added or removed from a trial with the command ```!AddtoTrial```
+
+To use this type a message that starts with that command followed by the trial ID number, @ message of the person to add or remove, and the appropriate role emoji.  Use the stop sign emoji to remove someone. 
 
 ## Running the Bot
 
@@ -35,6 +40,10 @@ Start a container from the image with the following.
 ```docker run -d --name discordbot discordbot```
 
 ## Todo
-* Add commands so a raid lead can manually add, remove, and move around people. 
+* Bugfix: If someone comments on the discord channel before the bot can add the reaction emoji to a new trial post the emoji could go onto the wrong post. 
+
+* Bugfix: If two people sign up at almost the same time (within a few seconds of each other) it is possible the bot will not add the first person who signed up to the roster. 
+
+* Add a perms check to the ability to create a trial, and manually sign people up. 
 
 * Add the ability for overflow backups to get a spot on the main roster if someone drops from the roster. 
