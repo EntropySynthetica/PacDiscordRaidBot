@@ -65,6 +65,7 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     trialid_rex = r'TrialID\=(\d{6})'
     trialid = re.findall(trialid_rex, trial_message.content)
 
+    #If the trial does not have an ID lets give it one. This enables new features to work with old rosters 
     if not trialid:
         trialid = []
         trialid.append(''.join(["{}".format(randint(0, 9)) for num in range(0, 6)]))
