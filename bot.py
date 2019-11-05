@@ -188,7 +188,7 @@ async def on_message(message):
 
     elif message.content.startswith('!NewTrial'):
         #Regular expression to parse out the arguments after the command.  If no arguments were passed we create a default trial of 2 2 8. 
-        NewTrialRex = r'\!NewTrial\s(?P<tank>\d)\s(?P<healer>\d)\s(?P<DPS>\d)\s(?P<Title>.*)'
+        NewTrialRex = r'\!NewTrial\s(?P<tank>\d{1,2})\s(?P<healer>\d{1,2})\s(?P<DPS>\d{1,2})(?:\s|)(?P<Title>(?:.*|))'
         NewTrialVars = re.search(NewTrialRex, message.content)
 
         if NewTrialVars:
