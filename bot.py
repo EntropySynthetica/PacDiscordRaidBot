@@ -187,7 +187,7 @@ async def on_message(message):
         return
 
     elif message.content.startswith('!NewTrial'):
-        #Regular expression to parse out the arguments after the command.  If no arguments were passed we create a default trial of 2 2 8. 
+        #Regular expression to parse out the arguments after the command.  If no arguments were passed we create a default trial of 2 2 8. Trial title is optional
         NewTrialRex = r'\!NewTrial\s(?P<tank>\d{1,2})\s(?P<healer>\d{1,2})\s(?P<DPS>\d{1,2})(?:\s|)(?P<Title>(?:.*|))'
         NewTrialVars = re.search(NewTrialRex, message.content)
 
@@ -196,6 +196,17 @@ async def on_message(message):
             healer_count = int(NewTrialVars.group('healer'))
             dps_count = int(NewTrialVars.group('DPS'))
             trial_title = NewTrialVars.group('Title')
+
+            #Lets limit the max spots for any role to 20 so we don't overrun the max Discord message length
+            if tank_count > 20:
+                tank_count = 20
+
+            if healer_count > 20:
+                healer_count = 20
+
+            if dps_count > 20:
+                dps_count = 20
+
         else:
             tank_count = 2
             healer_count = 2
