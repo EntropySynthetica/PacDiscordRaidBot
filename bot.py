@@ -70,18 +70,25 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         trialid = []
         trialid.append(''.join(["{}".format(randint(0, 9)) for num in range(0, 6)]))
 
-    #Check if user is already signed up, if so lets remove their old entry to prevent multiple signups. 
+    #Check if user is already signed up, if so and they sign up again lets put them on the backup roster. 
+    makeBackupTank = False
+    makeBackupHealer = False
+    makeBackupDPS = False
+
     for index, value in enumerate(tanks_signedup):
         if str(member_to_signup) in value:
             tanks_signedup[index] = "Open"
+            makeBackupTank = True
 
     for index, value in enumerate(healer_signedup):
         if str(member_to_signup) in value:
             healer_signedup[index] = "Open"
+            makeBackupHealer = True
 
     for index, value in enumerate(DPS_signedup):
         if str(member_to_signup) in value:
             DPS_signedup[index] = "Open"
+            makeBackupDPS = True
 
     for index, value in enumerate(backup_signedup):
         if str(member_to_signup) in value:
@@ -106,7 +113,7 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     #Add user to the Tank roster if they clicked tank emoji
     tankspotfound = False
     for index, value in enumerate(tanks_signedup):
-        if (value == "Open") and (tankspotfound == False) and (chosen_role == "tank"):
+        if (value == "Open") and ((tankspotfound == False) and (makeBackupTank == False)) and (chosen_role == "tank"):
             usersigned_up = (f'{member_to_signup} {role_emote}')
             tanks_signedup[index] = usersigned_up
             tankspotfound = True
@@ -117,14 +124,14 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         tank_header = tank_header + "Tank" + str(index) + "=" + value +"\n"
     
     #If the roster is full lets add them to the backup list.
-    if (tankrosterfull == True) and (chosen_role == "tank"):
+    if ((tankrosterfull == True) and (chosen_role == "tank")) or ((makeBackupTank == True) and (chosen_role == "tank")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
 
     #Add user to the healer roster if they clicked healer emoji
     healerspotfound = False
     for index, value in enumerate(healer_signedup):
-        if (value == "Open") and (healerspotfound == False) and (chosen_role == "healer"):
+        if (value == "Open") and ((healerspotfound == False) and (makeBackupHealer == False)) and (chosen_role == "healer"):
             usersigned_up = (f'{member_to_signup} {heal_emoji}')
             healer_signedup[index] = usersigned_up
             healerspotfound = True
@@ -134,13 +141,13 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         index = index + 1
         healer_header = healer_header + "Healer" + str(index) + "=" + value +"\n"
 
-    if (healerrosterfull == True) and (chosen_role == "healer"):
+    if ((healerrosterfull == True) and (chosen_role == "healer")) or ((makeBackupHealer == True) and (chosen_role == "healer")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
     #Add user to the DPS roster if they clicked stam or mag DPS emoji
     DPSspotfound = False
     for index, value in enumerate(DPS_signedup):
-        if (value == "Open") and (DPSspotfound == False) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
+        if (value == "Open") and ((DPSspotfound == False) and (makeBackupDPS == False)) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
             if chosen_role == "magdps":
                 dps_emoji = magdps_emoji
             elif chosen_role == "stamdps":
@@ -155,7 +162,7 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         index = index + 1
         DPS_header = DPS_header + "DPS" + str(index) + "=" + value +"\n"
 
-    if (DPSrosterfull == True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
+    if (DPSrosterfull == True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")) or (makeBackupDPS == True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
     #Add users to Backup Roster if something was full.
@@ -296,7 +303,9 @@ async def on_message(message):
         else:
             return
 
-
+    #Todo: Bot Help message to be DMed to person who types the command. 
+    elif message.content.startswith('!PacBotHelp'):
+        return
 
 #Watch for a emoji reaction on our trial post. 
 @client.event
