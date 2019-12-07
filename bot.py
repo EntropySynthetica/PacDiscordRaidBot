@@ -333,6 +333,31 @@ async def on_raw_reaction_add(reaction):
         else:
             return    
 
+@client.event
+async def on_raw_reaction_remove(reaction):
+    if reaction.user_id == client.user.id:
+        return
+
+    else:
+        message = await client.get_channel(reaction.channel_id).fetch_message(reaction.message_id)
+
+
+        #Figure out what role emoje was clicked
+        if message.content.startswith('Pac\'s Raid Signup Bot has posted'):
+
+            member_to_signup = (f'<@{reaction.user_id}>')
+
+            #print(message)
+            print(member_to_signup)
+            print(reaction.emoji)
+
+            edited_message = updateTrialRoster(message, member_to_signup, reaction.emoji)
+
+            await message.edit(content=edited_message)
+
+        else:
+            return    
+
 #Print Welcome Message and Assign a Role when someone joins the discord. 
 @client.event
 async def on_member_join(member):
