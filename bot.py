@@ -20,7 +20,39 @@ client = discord.Client()
 
 unsignup_emoji = '🛑'
 
+#Help menu to send to people who DM the bot. 
+pacBotHelpPage = f"""
+Pacrooti Bot Commands
 
+This bot creates a roster for where folks can sign up for guild trial events.  
+
+- To sign up for a role in a trial click the emoji on the roster for the role you want to go as.  If you click the same
+emoji twice you will be put on the backup roster for that role. 
+Tank Emoji = {tank_emoji}
+Healer Emoji = {heal_emoji}
+Stam DPS Emoji = {stamdps_emoji}
+Mag DPS Emoji = {magdps_emoji}
+Unsignup from Roster Emoji = {unsignup_emoji}
+
+- To create a new trial (requires perms) type the following in the channel you want to the roster to post in. 
+!NewTrial <number of tanks> <number of healers> <number of DPS> <Name and description of trial>
+
+Example to create a trial with 1 tank 2 healers and 9 DPS: 
+**!NewTrial 1 2 9 Friday Night Trial with Pacbot**
+
+- To add someone to a trial roster (requires perms)
+!AddtoTrial <TrialID> @Users Discord Name <emoji for role>
+
+Example to add a user named someome to an existing trial as a healer with an ID of 123456
+**!AddtoTrial 123456 @Someone {heal_emoji}**
+
+- You can remove someone from the trial by using the !AddtoTrial command with the {unsignup_emoji} emoji.
+
+Example to remove a user named someone from trial 123456
+**!AddtoTrial 123456 @Someone {unsignup_emoji}**
+
+"""
+#Function to update the trial roster when people react to emoji, or the !AddtoTrial command is called
 def updateTrialRoster(trial_message, member_to_signup, role_emote):
 
     #This function is called when we need to update the trial roster with someone signing up or being removed. 
@@ -181,7 +213,6 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     #Update our post with the new roster
     #await trial_message.edit(content=edited_message)
 
-
 #Connect the Client to Discord and report back.
 @client.event
 async def on_ready():
@@ -193,8 +224,16 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    #If the message is not from a discord server (aka guild) then it's a DM to the bot.  Let's respond with the help page for the bot. 
+    elif message.guild is None and message.author != client.user:
+
+        channel = await message.author.create_dm()
+
+        await channel.send(pacBotHelpPage)
+
+    #If someone typed the command !NewTrial If no arguments were passed we create a default trial of 2 2 8. Trial title is optional
     elif message.content.startswith('!NewTrial'):
-        #Regular expression to parse out the arguments after the command.  If no arguments were passed we create a default trial of 2 2 8. Trial title is optional
+        #Regular expression to parse out the arguments after the command.  
         NewTrialRex = r'\!NewTrial\s(?P<tank>\d{1,2})\s(?P<healer>\d{1,2})\s(?P<DPS>\d{1,2})(?:\s|)(?P<Title>(?:.*|))'
         NewTrialVars = re.search(NewTrialRex, message.content)
 
