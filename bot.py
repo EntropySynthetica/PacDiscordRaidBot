@@ -15,6 +15,7 @@ magdps_emoji = os.getenv('MAGDPS_EMOJI')
 stamdps_emoji = os.getenv('STAMDPS_EMOJI')
 welcome_channel_name = os.getenv('WELCOME_CHANNEL_NAME')
 welcome_role_name = os.getenv('WELCOME_ROLE_NAME')
+create_edit_trial_role = os.getenv('CREATE_EDIT_TRIAL_ROLE')
 
 client = discord.Client()
 
@@ -218,9 +219,19 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
 
-#Watch for the !NewTrial string at the begining.
+#Watch messages on the Discord server for commands the bot cares about. 
 @client.event
 async def on_message(message):
+    #Check if the message author has the Correct Role to Edit and Create Trial rosters Ignore messages that are DMs or from the Bot
+    if message.guild != None and message.author != client.user:
+        if create_edit_trial_role in [role.name for role in message.author.roles]:
+            userHasPerms = True
+        else:
+            userHasPerms = False
+
+        print(userHasPerms)
+
+    #Check if the message is from the bot. If so ignore. 
     if message.author == client.user:
         return
 
@@ -233,6 +244,12 @@ async def on_message(message):
 
     #If someone typed the command !NewTrial If no arguments were passed we create a default trial of 2 2 8. Trial title is optional
     elif message.content.startswith('!NewTrial'):
+        if userHasPerms == False:
+            errorMSG = "You don't have the correct role to create or edit a trial roster"
+            channel = await message.author.create_dm()
+            await channel.send(errorMSG)
+            return
+
         #Regular expression to parse out the arguments after the command.  
         NewTrialRex = r'\!NewTrial\s(?P<tank>\d{1,2})\s(?P<healer>\d{1,2})\s(?P<DPS>\d{1,2})(?:\s|)(?P<Title>(?:.*|))'
         NewTrialVars = re.search(NewTrialRex, message.content)
@@ -307,9 +324,12 @@ async def on_message(message):
                 await last_message.add_reaction(emoji)
 
     elif message.content.startswith('!AddtoTrial'):
-
-        print(str(message.content))
-
+        if userHasPerms == False:
+            errorMSG = "You don't have the correct role to create or edit a trial roster"
+            channel = await message.author.create_dm()
+            await channel.send(errorMSG)
+            return
+        
         AddtoTrial_rex = r'\!AddtoTrial\s(?P<trialid>\d{6})\s*(?P<member_to_signup>\<\@.*?\>)\s*(?P<role_emote>.*)(?:\s|$)'
         AddtoTrialVars = re.search(AddtoTrial_rex, message.content)
 
@@ -346,7 +366,7 @@ async def on_message(message):
     elif message.content.startswith('!PacBotHelp'):
         return
 
-#Watch for a emoji reaction on our trial post. 
+#Watch for a emoji reaction on our trial roster post. 
 @client.event
 async def on_raw_reaction_add(reaction):
     if reaction.user_id == client.user.id:
