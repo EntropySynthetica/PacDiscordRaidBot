@@ -1,10 +1,20 @@
-# Pac's Discord Raid Signup Bot
+# Pacrooti's Discord Bot
 
-Pac's Discord Raid Signup Bot is intended to create and allow people to signup for Elder Scrolls Online Raids from a Discord Channel. I created this for the Guild Pacrooti's Hirelings in ESO.
+This bot is built to provide services to the guild Discord of Pacrooti's Hirelings in the MMORPG Elder Scrolls Online. 
+
+Currently this Bot has two functions, and more may be added later.  
+
+1. Provides a welcome message and assigns the citizen rank when people join the server. 
+
+2. Allows Trial leads to post a roster and let people sign up by reacting to emoji on the roster. 
+
+This trial roster features of this bot was inspired by a private bot written by Kyzeragon. 
 
 ## Bot Usage
 
-To create a new event use the command `!NewTrial` followed by the number of open Tank spots, healer spots, DPS spots, and the Raid title. 
+Sending a DM message to the bot will cause it to reply with a help menu.  
+
+To create a new event use the command `!NewTrial` followed by the number of open Tank spots, healer spots, DPS spots, and the Trial title. 
 
 For example, to create a Vet Atherian Archvie trial signup for 2 Tanks, 2 Healers and 8 DPS you would type the following,
 
@@ -39,11 +49,13 @@ Start a container from the image with the following.
 
 ```docker run -d --name discordbot discordbot```
 
+## New Features
+
+12/08/19 - Sending a DM to the bot will cause it to respond with a help message.  Bot commands will only work from someone with the appropriate role in the discord server. A person issuing commands without the correct role will get DM from the bot with an error message.
+
 ## Todo
 * Bugfix: If someone comments on the discord channel before the bot can add the reaction emoji to a new trial post the emoji could go onto the wrong post. 
 
 * Bugfix: If two people sign up at almost the same time (within a few seconds of each other) it is possible the bot will not add the first person who signed up to the roster. 
-
-* Add a perms check to the ability to create a trial, and manually sign people up. 
 
 * Add the ability for overflow backups to get a spot on the main roster if someone drops from the roster. 
