@@ -8,4 +8,4 @@ RUN python -m pip install -r requirements.txt
 ADD .env /app
 ADD bot.py /app
 
-CMD [ "python", "/app/bot.py" ]
+CMD [ "python", "-u", "/app/bot.py" ]

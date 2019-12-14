@@ -1,6 +1,7 @@
 import os
 import discord
 import re
+from datetime import datetime
 from discord.ext import commands
 from dotenv import load_dotenv
 from random import randint
@@ -69,7 +70,6 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     elif str(role_emote) == unsignup_emoji:
         chosen_role = "unsignup"
     else:
-        print('Emoji = ' + str(role_emote))
         chosen_role = "None"
         return
 
@@ -211,13 +211,16 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + DPS_header + "\n" + backup_header + "\n" + trialid_header
     
     return edited_message
-    #Update our post with the new roster
-    #await trial_message.edit(content=edited_message)
+
+def timestamp():
+    now = datetime.now()
+    timestamp = now.strftime("%m/%d/%Y, %H:%M:%S")
+    return timestamp
 
 #Connect the Client to Discord and report back.
 @client.event
 async def on_ready():
-    print(f'{client.user} has connected to Discord!')
+    print(f'{timestamp()}, {client.user} has connected to {client.guilds} Discord')
 
 #Watch messages on the Discord server for commands the bot cares about. 
 @client.event
@@ -229,10 +232,13 @@ async def on_message(message):
         else:
             userHasPerms = False
 
-        print(userHasPerms)
+    #Print to log the message if it isn't from the bot. 
+    if message.author != client.user:
+        print(f'{timestamp()}, Channel={message.channel}, Author={message.author}, Message={message.content}')
 
-    #Check if the message is from the bot. If so ignore. 
+    #If the message is from the bot lets do nothing. 
     if message.author == client.user:
+        print(f'{timestamp()}, Message from bot, ignoring.')
         return
 
     #If the message is not from a discord server (aka guild) then it's a DM to the bot.  Let's respond with the help page for the bot. 
@@ -242,12 +248,15 @@ async def on_message(message):
 
         await channel.send(pacBotHelpPage)
 
+        print(f'{timestamp()}, Responded to {message.author} with help page.')
+
     #If someone typed the command !NewTrial If no arguments were passed we create a default trial of 2 2 8. Trial title is optional
     elif message.content.startswith('!NewTrial'):
         if userHasPerms == False:
             errorMSG = "You don't have the correct role to create or edit a trial roster"
             channel = await message.author.create_dm()
             await channel.send(errorMSG)
+            print(f'{timestamp()}, {message.author} tried to create a new trial but does not have the role {create_edit_trial_role}.')
             return
 
         #Regular expression to parse out the arguments after the command.  
@@ -275,12 +284,6 @@ async def on_message(message):
             healer_count = 2
             dps_count = 8
             trial_title = "New Trial"
-
-        #Debug block to see what vars were passed. 
-        print('Tank Count = ' + str(tank_count))
-        print('Healer Count = ' + str(healer_count))
-        print('DPS Count = ' + str(dps_count))
-        print('Trial title = ' + trial_title)
 
         #Create the intial trial post. 
         title_header = "Pac's Raid Signup Bot has posted " + trial_title + "\n"
@@ -323,11 +326,14 @@ async def on_message(message):
             for emoji in default_reactions:
                 await last_message.add_reaction(emoji)
 
+        print(f'{timestamp()}, Created a trial with {str(tank_count)} Tanks, {str(healer_count)} Healers, and {str(dps_count)} DPS named {trial_title} in channel {message.channel}')
+
     elif message.content.startswith('!AddtoTrial'):
         if userHasPerms == False:
             errorMSG = "You don't have the correct role to create or edit a trial roster"
             channel = await message.author.create_dm()
             await channel.send(errorMSG)
+            print(f'{timestamp()}, {message.author} tried to add/remove someone from trial but does not have the role {create_edit_trial_role}.')
             return
         
         AddtoTrial_rex = r'\!AddtoTrial\s(?P<trialid>\d{6})\s*(?P<member_to_signup>\<\@.*?\>)\s*(?P<role_emote>.*)(?:\s|$)'
@@ -340,10 +346,7 @@ async def on_message(message):
             
             member_to_signup = member_to_signup.replace('!', '')
 
-            print(trialid)
-            print(member_to_signup)
-            print(role_emote)
-
+            trialid_found = False
             async for trial_message in message.channel.history():
                 
                 #Search the message for a Trial ID
@@ -353,13 +356,18 @@ async def on_message(message):
                 if trialid_message:
 
                     if trialid_message[0] == trialid:
-                        print(str(trial_message.id))
-
                         edited_message = updateTrialRoster(trial_message, member_to_signup, role_emote)
-
                         await trial_message.edit(content=edited_message)
 
+                        trialid_found = True
+                        print(f'{timestamp()}, {message.author} used addtotrial {role_emote} {member_to_signup} to trial {trialid}.')
+
+            if trialid_found == False:
+                print(f'{timestamp()}, {message.author} Addtotrial error, {trialid} not found.')
+
+
         else:
+            print(f'{timestamp()}, {message.author} Addtotrial error, Message syntax invalid.')
             return
 
     #Todo: Bot Help message to be DMed to person who types the command. 
@@ -381,13 +389,11 @@ async def on_raw_reaction_add(reaction):
 
             member_to_signup = (f'<@{reaction.user_id}>')
 
-            #print(message)
-            print(member_to_signup)
-            print(reaction.emoji)
-
             edited_message = updateTrialRoster(message, member_to_signup, reaction.emoji)
 
             await message.edit(content=edited_message)
+
+            print(f'{timestamp()}, {member_to_signup} clicked the {reaction.emoji} emoji.')
 
         else:
             return    
@@ -406,13 +412,11 @@ async def on_raw_reaction_remove(reaction):
 
             member_to_signup = (f'<@{reaction.user_id}>')
 
-            #print(message)
-            print(member_to_signup)
-            print(reaction.emoji)
-
             edited_message = updateTrialRoster(message, member_to_signup, reaction.emoji)
 
             await message.edit(content=edited_message)
+
+            print(f'{timestamp()}, {member_to_signup} un-clicked the {reaction.emoji} emoji.')
 
         else:
             return    
@@ -431,6 +435,8 @@ async def on_member_join(member):
 
     await member.add_roles(role)
     await channel.send(welcome_message)
+
+    print(f'{timestamp()}, The bot welcomed {welcome_member} to the guild.')
 
 
 client.run(token)
