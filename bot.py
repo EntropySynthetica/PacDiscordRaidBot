@@ -214,7 +214,7 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
 
 def timestamp():
     now = datetime.now()
-    timestamp = now.strftime("%m/%d/%Y, %H:%M:%S")
+    timestamp = now.strftime("%m/%d/%Y, %H:%M:%S %Z")
     return timestamp
 
 #Connect the Client to Discord and report back.
