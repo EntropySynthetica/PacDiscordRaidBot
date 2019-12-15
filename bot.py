@@ -280,10 +280,11 @@ async def on_message(message):
                 dps_count = 20
 
         else:
-            tank_count = 2
-            healer_count = 2
-            dps_count = 8
-            trial_title = "New Trial"
+            errorMSG = "Syntax Error for command !NewTrial.  DM the bot for a command help page."
+            channel = await message.author.create_dm()
+            await channel.send(errorMSG)
+            print(f'{timestamp()}, {message.author} NewTrial error, Message syntax invalid.')
+            return
 
         #Create the intial trial post. 
         title_header = "Pac's Raid Signup Bot has posted " + trial_title + "\n"
@@ -318,9 +319,6 @@ async def on_message(message):
 
         #Grab the last message posted to discord. That should be what our bot just posted. We need it's ID so we can add the reaction emotes.
         async for last_message in message.channel.history(limit=1):
-            #print(last_message)
-            #print(last_message.content)
-            #print('Last Message ID = ' + str(last_message.id))
 
             default_reactions = [tank_emoji,heal_emoji,stamdps_emoji,magdps_emoji,unsignup_emoji]
             for emoji in default_reactions:
@@ -367,6 +365,9 @@ async def on_message(message):
 
 
         else:
+            errorMSG = "Syntax Error for command !AddtoTrial.  DM the bot for a command help page."
+            channel = await message.author.create_dm()
+            await channel.send(errorMSG)
             print(f'{timestamp()}, {message.author} Addtotrial error, Message syntax invalid.')
             return
 
@@ -405,7 +406,6 @@ async def on_raw_reaction_remove(reaction):
 
     else:
         message = await client.get_channel(reaction.channel_id).fetch_message(reaction.message_id)
-
 
         #Figure out what role emoje was clicked
         if message.content.startswith('Pac\'s Raid Signup Bot has posted'):
