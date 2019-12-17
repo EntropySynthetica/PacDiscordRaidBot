@@ -212,10 +212,16 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     
     return edited_message
 
+#Generate a timestamp for our logs.
 def timestamp():
     now = datetime.now()
     timestamp = now.strftime("%m/%d/%Y, %H:%M:%S %Z")
     return timestamp
+
+#Function to generate a random Trial ID.
+def getTrialID():
+        trialid = ''.join(["{}".format(randint(0, 9)) for num in range(0, 6)])
+        return trialid
 
 #Connect the Client to Discord and report back.
 @client.event
@@ -250,7 +256,7 @@ async def on_message(message):
 
         print(f'{timestamp()}, Responded to {message.author} with help page.')
 
-    #If someone typed the command !NewTrial If no arguments were passed we create a default trial of 2 2 8. Trial title is optional
+    #If someone typed the command !NewTrial with incorrect syntax lets throw an error.
     elif message.content.startswith('!NewTrial'):
         if userHasPerms == False:
             errorMSG = "You don't have the correct role to create or edit a trial roster"
@@ -307,9 +313,23 @@ async def on_message(message):
             dps_header = dps_header + "DPS" + str(i) + "=Open\n"
 
         # Assign the Trial an ID number so we can reference it later. 
-        trialid = ''.join(["{}".format(randint(0, 9)) for num in range(0, 6)])
 
-        trialid_header = ("TrialID=" + str(trialid)) 
+        #Get a list of previous trialIDs in channel so we can check for collision. 
+        trialid_history = []
+        async for trial_message in message.channel.history():
+            trialid_rex = r'TrialID\=(\d{6})'
+            messageTrialID = re.findall(trialid_rex, trial_message.content)
+
+            if messageTrialID:
+                trialid_history.append(int(messageTrialID[0]))
+
+        #Pull a Random trial ID from getTrialID(), then make sure it hasn't been used before.  Loop until we find an unused ID. 
+        while True:
+            trialID = getTrialID()
+            if trialID not in trialid_history:
+                break
+
+        trialid_header = ("TrialID=" + str(trialID))
 
         response = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header + "\n" + trialid_header
 
