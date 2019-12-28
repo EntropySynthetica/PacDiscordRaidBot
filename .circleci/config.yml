@@ -1,0 +1,21 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: python:3.7-alpine3.10
+
+    working_directory: /app
+
+    steps:
+      - checkout
+
+      - run:
+        name: install dependencies
+        command: |
+          python3 -c 'import sys; f = open("/usr/local/lib/python3.7/site-packages/_manylinux.py", "w"); f.write("manylinux1_compatible = True"); f.close()'
+          python -m pip install -r requirements.txt
+
+      - run:
+          name: Run Static Analysis
+          command: |
+            flake8 --max-line-length=240 bot.py
