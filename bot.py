@@ -56,7 +56,7 @@ Example to remove a user named someone from trial 123456
 
 
 # Function to update the trial roster when people react to emoji, or the !AddtoTrial command is called.
-def updateTrialRoster(trial_message, member_to_signup, role_emote):
+def update_trial_roster(trial_message, member_to_signup, role_emote):
 
     # This function is called when we need to update the trial roster with someone signing up or being removed.
 
@@ -89,8 +89,8 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     healer_rex = r'Healer\d\=(.*)'
     healer_signedup = re.findall(healer_rex, trial_message.content)
 
-    DPS_rex = r'DPS\d\=(.*)'
-    DPS_signedup = re.findall(DPS_rex, trial_message.content)
+    dps_rex = r'DPS\d\=(.*)'
+    dps_signedup = re.findall(dps_rex, trial_message.content)
 
     backup_rex = r'Backup\d\=(.*)'
     backup_signedup = re.findall(backup_rex, trial_message.content)
@@ -105,24 +105,24 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         trialid.append(''.join(["{}".format(randint(0, 9)) for num in range(0, 6)]))
 
     # Check if user is already signed up, if so and they sign up again lets put them on the backup roster.
-    makeBackupTank = False
-    makeBackupHealer = False
-    makeBackupDPS = False
+    make_backup_tank = False
+    make_backup_healer = False
+    make_backup_dps = False
 
     for index, value in enumerate(tanks_signedup):
         if str(member_to_signup) in value:
             tanks_signedup[index] = "Open"
-            makeBackupTank = True
+            make_backup_tank = True
 
     for index, value in enumerate(healer_signedup):
         if str(member_to_signup) in value:
             healer_signedup[index] = "Open"
-            makeBackupHealer = True
+            make_backup_healer = True
 
-    for index, value in enumerate(DPS_signedup):
+    for index, value in enumerate(dps_signedup):
         if str(member_to_signup) in value:
-            DPS_signedup[index] = "Open"
-            makeBackupDPS = True
+            dps_signedup[index] = "Open"
+            make_backup_dps = True
 
     for index, value in enumerate(backup_signedup):
         if str(member_to_signup) in value:
@@ -130,24 +130,24 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
 
     # Check if Rosters are full.
     if "Open" not in tanks_signedup:
-        tankrosterfull = True
+        tank_roster_full = True
     else:
-        tankrosterfull = False
+        tank_roster_full = False
 
     if "Open" not in healer_signedup:
-        healerrosterfull = True
+        healer_roster_full = True
     else:
-        healerrosterfull = False
+        healer_roster_full = False
 
-    if "Open" not in DPS_signedup:
-        DPSrosterfull = True
+    if "Open" not in dps_signedup:
+        dps_roster_full = True
     else:
-        DPSrosterfull = False
+        dps_roster_full = False
 
     # Add user to the Tank roster if they clicked tank emoji.
     tankspotfound = False
     for index, value in enumerate(tanks_signedup):
-        if (value == "Open") and ((tankspotfound is False) and (makeBackupTank is False)) and (chosen_role == "tank"):
+        if (value == "Open") and ((tankspotfound is False) and (make_backup_tank is False)) and (chosen_role == "tank"):
             usersigned_up = (f'{member_to_signup} {role_emote}')
             tanks_signedup[index] = usersigned_up
             tankspotfound = True
@@ -158,13 +158,13 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         tank_header = tank_header + "Tank" + str(index) + "=" + value + "\n"
 
     # If the roster is full lets add them to the backup list.
-    if ((tankrosterfull is True) and (chosen_role == "tank")) or ((makeBackupTank is True) and (chosen_role == "tank")):
+    if ((tank_roster_full is True) and (chosen_role == "tank")) or ((make_backup_tank is True) and (chosen_role == "tank")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
     # Add user to the healer roster if they clicked healer emoji.
     healerspotfound = False
     for index, value in enumerate(healer_signedup):
-        if (value == "Open") and ((healerspotfound is False) and (makeBackupHealer is False)) and (chosen_role == "healer"):
+        if (value == "Open") and ((healerspotfound is False) and (make_backup_healer is False)) and (chosen_role == "healer"):
             usersigned_up = (f'{member_to_signup} {HEAL_EMOJI}')
             healer_signedup[index] = usersigned_up
             healerspotfound = True
@@ -174,28 +174,28 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         index = index + 1
         healer_header = healer_header + "Healer" + str(index) + "=" + value + "\n"
 
-    if ((healerrosterfull is True) and (chosen_role == "healer")) or ((makeBackupHealer is True) and (chosen_role == "healer")):
+    if ((healer_roster_full is True) and (chosen_role == "healer")) or ((make_backup_healer is True) and (chosen_role == "healer")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
     # Add user to the DPS roster if they clicked stam or mag DPS emoji.
-    DPSspotfound = False
-    for index, value in enumerate(DPS_signedup):
-        if (value == "Open") and ((DPSspotfound is False) and (makeBackupDPS is False)) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
+    dps_spot_found = False
+    for index, value in enumerate(dps_signedup):
+        if (value == "Open") and ((dps_spot_found is False) and (make_backup_dps is False)) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
             if chosen_role == "magdps":
                 dps_emoji = MAGDPS_EMOJI
             elif chosen_role == "stamdps":
                 dps_emoji = STAMDPS_EMOJI
 
             usersigned_up = (f'{member_to_signup} {dps_emoji}')
-            DPS_signedup[index] = usersigned_up
-            DPSspotfound = True
+            dps_signedup[index] = usersigned_up
+            dps_spot_found = True
 
-    DPS_header = ""
-    for index, value in enumerate(DPS_signedup):
+    dps_header = ""
+    for index, value in enumerate(dps_signedup):
         index = index + 1
-        DPS_header = DPS_header + "DPS" + str(index) + "=" + value + "\n"
+        dps_header = dps_header + "DPS" + str(index) + "=" + value + "\n"
 
-    if (DPSrosterfull is True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")) or (makeBackupDPS is True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
+    if (dps_roster_full is True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")) or (make_backup_dps is True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
     # Add users to Backup Roster if something was full.
@@ -207,7 +207,7 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     # Add in the TrialID
     trialid_header = ("TrialID=" + str(trialid[0]))
 
-    edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + DPS_header + "\n" + backup_header + "\n" + trialid_header
+    edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header + "\n" + backup_header + "\n" + trialid_header
 
     return edited_message
 
@@ -215,12 +215,12 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
 # Generate a timestamp for our logs.
 def timestamp():
     now = datetime.now()
-    timestamp = now.strftime("%m/%d/%Y, %H:%M:%S %Z")
-    return timestamp
+    time_stamp = now.strftime("%m/%d/%Y, %H:%M:%S %Z")
+    return time_stamp
 
 
 # Function to generate a random Trial ID.
-def getTrialID():
+def get_trial_id():
     trialid = ''.join(["{}".format(randint(0, 9)) for num in range(0, 6)])
     return trialid
 
@@ -235,9 +235,9 @@ async def on_message(message):
     # Check if the message author has the Correct Role to Edit and Create Trial rosters Ignore messages that are DMs or from the Bot.
     if message.guild is not None and message.author != client.user:
         if CREATE_EDIT_TRIAL_ROLE in [role.name for role in message.author.roles]:
-            userHasPerms = True
+            user_has_perms = True
         else:
-            userHasPerms = False
+            user_has_perms = False
 
     # Print to log the message if it isn't from the bot.
     if message.author != client.user:
@@ -259,22 +259,22 @@ async def on_message(message):
 
     # If someone typed the command !NewTrial with incorrect syntax lets throw an error.
     elif message.content.startswith('!NewTrial'):
-        if userHasPerms is False:
-            errorMSG = "You don't have the correct role to create or edit a trial roster"
+        if user_has_perms is False:
+            error_msg = "You don't have the correct role to create or edit a trial roster"
             channel = await message.author.create_dm()
-            await channel.send(errorMSG)
+            await channel.send(error_msg)
             print(f'{timestamp()}, {message.author} tried to create a new trial but does not have the role {CREATE_EDIT_TRIAL_ROLE}.')
             return
 
         # Regular expression to parse out the arguments after the command.
-        NewTrialRex = r'\!NewTrial\s(?P<tank>\d{1,2})\s(?P<healer>\d{1,2})\s(?P<DPS>\d{1,2})(?:\s|)(?P<Title>(?:.*|))'
-        NewTrialVars = re.search(NewTrialRex, message.content)
+        new_trial_rex = r'\!NewTrial\s(?P<tank>\d{1,2})\s(?P<healer>\d{1,2})\s(?P<DPS>\d{1,2})(?:\s|)(?P<Title>(?:.*|))'
+        new_trial_vars = re.search(new_trial_rex, message.content)
 
-        if NewTrialVars:
-            tank_count = int(NewTrialVars.group('tank'))
-            healer_count = int(NewTrialVars.group('healer'))
-            dps_count = int(NewTrialVars.group('DPS'))
-            trial_title = NewTrialVars.group('Title')
+        if new_trial_vars:
+            tank_count = int(new_trial_vars.group('tank'))
+            healer_count = int(new_trial_vars.group('healer'))
+            dps_count = int(new_trial_vars.group('DPS'))
+            trial_title = new_trial_vars.group('Title')
 
             # Lets limit the max spots for any role to 20 so we don't overrun the max Discord message length.
             if tank_count > 20:
@@ -287,9 +287,9 @@ async def on_message(message):
                 dps_count = 20
 
         else:
-            errorMSG = "Syntax Error for command !NewTrial.  DM the bot for a command help page."
+            error_msg = "Syntax Error for command !NewTrial.  DM the bot for a command help page."
             channel = await message.author.create_dm()
-            await channel.send(errorMSG)
+            await channel.send(error_msg)
             print(f'{timestamp()}, {message.author} NewTrial error, Message syntax invalid.')
             return
 
@@ -319,18 +319,18 @@ async def on_message(message):
         trialid_history = []
         async for trial_message in message.channel.history():
             trialid_rex = r'TrialID\=(\d{6})'
-            messageTrialID = re.findall(trialid_rex, trial_message.content)
+            message_trial_id = re.findall(trialid_rex, trial_message.content)
 
-            if messageTrialID:
-                trialid_history.append(int(messageTrialID[0]))
+            if message_trial_id:
+                trialid_history.append(int(message_trial_id[0]))
 
-        # Pull a Random trial ID from getTrialID(), then make sure it hasn't been used before.  Loop until we find an unused ID.
+        # Pull a Random trial ID from get_trial_id(), then make sure it hasn't been used before.  Loop until we find an unused ID.
         while True:
-            trialID = getTrialID()
-            if trialID not in trialid_history:
+            trialid = get_trial_id()
+            if trialid not in trialid_history:
                 break
 
-        trialid_header = ("TrialID=" + str(trialID))
+        trialid_header = ("TrialID=" + str(trialid))
 
         response = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header + "\n" + trialid_header
 
@@ -347,20 +347,20 @@ async def on_message(message):
         print(f'{timestamp()}, Created a trial with {str(tank_count)} Tanks, {str(healer_count)} Healers, and {str(dps_count)} DPS named {trial_title} in channel {message.channel}')
 
     elif message.content.startswith('!AddtoTrial'):
-        if userHasPerms is False:
-            errorMSG = "You don't have the correct role to create or edit a trial roster"
+        if user_has_perms is False:
+            error_msg = "You don't have the correct role to create or edit a trial roster"
             channel = await message.author.create_dm()
-            await channel.send(errorMSG)
+            await channel.send(error_msg)
             print(f'{timestamp()}, {message.author} tried to add/remove someone from trial but does not have the role {CREATE_EDIT_TRIAL_ROLE}.')
             return
 
-        AddtoTrial_rex = r'\!AddtoTrial\s(?P<trialid>\d{6})\s*(?P<member_to_signup>\<\@.*?\>)\s*(?P<role_emote>.*)(?:\s|$)'
-        AddtoTrialVars = re.search(AddtoTrial_rex, message.content)
+        add_to_trial_rex = r'\!AddtoTrial\s(?P<trialid>\d{6})\s*(?P<member_to_signup>\<\@.*?\>)\s*(?P<role_emote>.*)(?:\s|$)'
+        add_to_trial_vars = re.search(add_to_trial_rex, message.content)
 
-        if AddtoTrialVars:
-            trialid = AddtoTrialVars.group('trialid')
-            member_to_signup = AddtoTrialVars.group('member_to_signup')
-            role_emote = AddtoTrialVars.group('role_emote')
+        if add_to_trial_vars:
+            trialid = add_to_trial_vars.group('trialid')
+            member_to_signup = add_to_trial_vars.group('member_to_signup')
+            role_emote = add_to_trial_vars.group('role_emote')
 
             member_to_signup = member_to_signup.replace('!', '')
 
@@ -374,7 +374,7 @@ async def on_message(message):
                 if trialid_message:
 
                     if trialid_message[0] == trialid:
-                        edited_message = updateTrialRoster(trial_message, member_to_signup, role_emote)
+                        edited_message = update_trial_roster(trial_message, member_to_signup, role_emote)
                         await trial_message.edit(content=edited_message)
 
                         trialid_found = True
@@ -384,9 +384,9 @@ async def on_message(message):
                 print(f'{timestamp()}, {message.author} Addtotrial error, {trialid} not found.')
 
         else:
-            errorMSG = "Syntax Error for command !AddtoTrial.  DM the bot for a command help page."
+            error_msg = "Syntax Error for command !AddtoTrial.  DM the bot for a command help page."
             channel = await message.author.create_dm()
-            await channel.send(errorMSG)
+            await channel.send(error_msg)
             print(f'{timestamp()}, {message.author} Addtotrial error, Message syntax invalid.')
             return
 
@@ -402,7 +402,7 @@ async def on_raw_reaction_add(reaction):
         # Figure out what role emoje was clicked
         if message.content.startswith('Pac\'s Raid Signup Bot has posted'):
             member_to_signup = (f'<@{reaction.user_id}>')
-            edited_message = updateTrialRoster(message, member_to_signup, reaction.emoji)
+            edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
 
             await message.edit(content=edited_message)
 
@@ -425,7 +425,7 @@ async def on_raw_reaction_remove(reaction):
 
             member_to_signup = (f'<@{reaction.user_id}>')
 
-            edited_message = updateTrialRoster(message, member_to_signup, reaction.emoji)
+            edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
 
             await message.edit(content=edited_message)
 
