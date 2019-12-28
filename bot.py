@@ -147,7 +147,7 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     # Add user to the Tank roster if they clicked tank emoji.
     tankspotfound = False
     for index, value in enumerate(tanks_signedup):
-        if (value == "Open") and ((tankspotfound == False) and (makeBackupTank == False)) and (chosen_role == "tank"):
+        if (value == "Open") and ((tankspotfound is False) and (makeBackupTank is False)) and (chosen_role == "tank"):
             usersigned_up = (f'{member_to_signup} {role_emote}')
             tanks_signedup[index] = usersigned_up
             tankspotfound = True
@@ -158,13 +158,13 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         tank_header = tank_header + "Tank" + str(index) + "=" + value + "\n"
 
     # If the roster is full lets add them to the backup list.
-    if ((tankrosterfull == True) and (chosen_role == "tank")) or ((makeBackupTank == True) and (chosen_role == "tank")):
+    if ((tankrosterfull is True) and (chosen_role == "tank")) or ((makeBackupTank is True) and (chosen_role == "tank")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
     # Add user to the healer roster if they clicked healer emoji.
     healerspotfound = False
     for index, value in enumerate(healer_signedup):
-        if (value == "Open") and ((healerspotfound == False) and (makeBackupHealer == False)) and (chosen_role == "healer"):
+        if (value == "Open") and ((healerspotfound is False) and (makeBackupHealer is False)) and (chosen_role == "healer"):
             usersigned_up = (f'{member_to_signup} {heal_emoji}')
             healer_signedup[index] = usersigned_up
             healerspotfound = True
@@ -174,13 +174,13 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         index = index + 1
         healer_header = healer_header + "Healer" + str(index) + "=" + value + "\n"
 
-    if ((healerrosterfull == True) and (chosen_role == "healer")) or ((makeBackupHealer == True) and (chosen_role == "healer")):
+    if ((healerrosterfull is True) and (chosen_role == "healer")) or ((makeBackupHealer is True) and (chosen_role == "healer")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
     # Add user to the DPS roster if they clicked stam or mag DPS emoji.
     DPSspotfound = False
     for index, value in enumerate(DPS_signedup):
-        if (value == "Open") and ((DPSspotfound == False) and (makeBackupDPS == False)) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
+        if (value == "Open") and ((DPSspotfound is False) and (makeBackupDPS is False)) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
             if chosen_role == "magdps":
                 dps_emoji = magdps_emoji
             elif chosen_role == "stamdps":
@@ -195,7 +195,7 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
         index = index + 1
         DPS_header = DPS_header + "DPS" + str(index) + "=" + value + "\n"
 
-    if (DPSrosterfull == True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")) or (makeBackupDPS == True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
+    if (DPSrosterfull is True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")) or (makeBackupDPS is True) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
     # Add users to Backup Roster if something was full.
@@ -233,7 +233,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     # Check if the message author has the Correct Role to Edit and Create Trial rosters Ignore messages that are DMs or from the Bot.
-    if message.guild != None and message.author != client.user:
+    if message.guild is not None and message.author != client.user:
         if create_edit_trial_role in [role.name for role in message.author.roles]:
             userHasPerms = True
         else:
@@ -259,7 +259,7 @@ async def on_message(message):
 
     # If someone typed the command !NewTrial with incorrect syntax lets throw an error.
     elif message.content.startswith('!NewTrial'):
-        if userHasPerms == False:
+        if userHasPerms is False:
             errorMSG = "You don't have the correct role to create or edit a trial roster"
             channel = await message.author.create_dm()
             await channel.send(errorMSG)
@@ -347,7 +347,7 @@ async def on_message(message):
         print(f'{timestamp()}, Created a trial with {str(tank_count)} Tanks, {str(healer_count)} Healers, and {str(dps_count)} DPS named {trial_title} in channel {message.channel}')
 
     elif message.content.startswith('!AddtoTrial'):
-        if userHasPerms == False:
+        if userHasPerms is False:
             errorMSG = "You don't have the correct role to create or edit a trial roster"
             channel = await message.author.create_dm()
             await channel.send(errorMSG)
@@ -380,7 +380,7 @@ async def on_message(message):
                         trialid_found = True
                         print(f'{timestamp()}, {message.author} used addtotrial {role_emote} {member_to_signup} to trial {trialid}.')
 
-            if trialid_found == False:
+            if trialid_found is False:
                 print(f'{timestamp()}, {message.author} Addtotrial error, {trialid} not found.')
 
         else:
