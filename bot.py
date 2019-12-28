@@ -8,32 +8,32 @@ import discord
 load_dotenv()
 
 # Load Vars from .env
-token = os.getenv('DISCORD_TOKEN')
-tank_emoji = os.getenv('TANK_EMOJI')
-heal_emoji = os.getenv('HEAL_EMOJI')
-magdps_emoji = os.getenv('MAGDPS_EMOJI')
-stamdps_emoji = os.getenv('STAMDPS_EMOJI')
-welcome_channel_name = os.getenv('WELCOME_CHANNEL_NAME')
-welcome_role_name = os.getenv('WELCOME_ROLE_NAME')
-create_edit_trial_role = os.getenv('CREATE_EDIT_TRIAL_ROLE')
+TOKEN = os.getenv('DISCORD_TOKEN')
+TANK_EMOJI = os.getenv('TANK_EMOJI')
+HEAL_EMOJI = os.getenv('HEAL_EMOJI')
+MAGDPS_EMOJI = os.getenv('MAGDPS_EMOJI')
+STAMDPS_EMOJI = os.getenv('STAMDPS_EMOJI')
+WELCOME_CHANNEL_NAME = os.getenv('WELCOME_CHANNEL_NAME')
+WELCOME_ROLE_NAME = os.getenv('WELCOME_ROLE_NAME')
+CREATE_EDIT_TRIAL_ROLE = os.getenv('CREATE_EDIT_TRIAL_ROLE')
 
 client = discord.Client()
 
-unsignup_emoji = '🛑'
+UNSIGNUP_EMOJI = '🛑'
 
 # Help menu to send to people who DM the bot.
-pacBotHelpPage = f"""
+PAC_BOT_HELP_PAGE = f"""
 Pacrooti Bot Commands
 
 This bot creates a roster for where folks can sign up for guild trial events.
 
 - To sign up for a role in a trial click the emoji on the roster for the role you want to go as.  If you click the same
 emoji twice you will be put on the backup roster for that role.
-Tank Emoji = {tank_emoji}
-Healer Emoji = {heal_emoji}
-Stam DPS Emoji = {stamdps_emoji}
-Mag DPS Emoji = {magdps_emoji}
-Unsignup from Roster Emoji = {unsignup_emoji}
+Tank Emoji = {TANK_EMOJI}
+Healer Emoji = {HEAL_EMOJI}
+Stam DPS Emoji = {STAMDPS_EMOJI}
+Mag DPS Emoji = {MAGDPS_EMOJI}
+Unsignup from Roster Emoji = {UNSIGNUP_EMOJI}
 
 - To create a new trial (requires perms) type the following in the channel you want to the roster to post in.
 !NewTrial <number of tanks> <number of healers> <number of DPS> <Name and description of trial>
@@ -45,12 +45,12 @@ Example to create a trial with 1 tank 2 healers and 9 DPS:
 !AddtoTrial <TrialID> @Users Discord Name <emoji for role>
 
 Example to add a user named someome to an existing trial as a healer with an ID of 123456
-**!AddtoTrial 123456 @Someone {heal_emoji}**
+**!AddtoTrial 123456 @Someone {HEAL_EMOJI}**
 
-- You can remove someone from the trial by using the !AddtoTrial command with the {unsignup_emoji} emoji.
+- You can remove someone from the trial by using the !AddtoTrial command with the {UNSIGNUP_EMOJI} emoji.
 
 Example to remove a user named someone from trial 123456
-**!AddtoTrial 123456 @Someone {unsignup_emoji}**
+**!AddtoTrial 123456 @Someone {UNSIGNUP_EMOJI}**
 
 """
 
@@ -60,15 +60,15 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
 
     # This function is called when we need to update the trial roster with someone signing up or being removed.
 
-    if str(role_emote) == tank_emoji:
+    if str(role_emote) == TANK_EMOJI:
         chosen_role = "tank"
-    elif str(role_emote) == heal_emoji:
+    elif str(role_emote) == HEAL_EMOJI:
         chosen_role = "healer"
-    elif str(role_emote) == magdps_emoji:
+    elif str(role_emote) == MAGDPS_EMOJI:
         chosen_role = "magdps"
-    elif str(role_emote) == stamdps_emoji:
+    elif str(role_emote) == STAMDPS_EMOJI:
         chosen_role = "stamdps"
-    elif str(role_emote) == unsignup_emoji:
+    elif str(role_emote) == UNSIGNUP_EMOJI:
         chosen_role = "unsignup"
     else:
         chosen_role = "None"
@@ -80,7 +80,7 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
 
     title_header = "Pac's Raid Signup Bot has posted " + trial_title[0] + "\n"
 
-    instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\nUnSignup = {unsignup_emoji}\n")
+    instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {TANK_EMOJI}\nHealer = {HEAL_EMOJI}\nMagDPS = {MAGDPS_EMOJI}\nStamDPS = {STAMDPS_EMOJI}\nUnSignup = {UNSIGNUP_EMOJI}\n")
 
     # Parse Roster of folks already signed up.
     tank_rex = r'Tank\d\=(.*)'
@@ -165,7 +165,7 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     healerspotfound = False
     for index, value in enumerate(healer_signedup):
         if (value == "Open") and ((healerspotfound is False) and (makeBackupHealer is False)) and (chosen_role == "healer"):
-            usersigned_up = (f'{member_to_signup} {heal_emoji}')
+            usersigned_up = (f'{member_to_signup} {HEAL_EMOJI}')
             healer_signedup[index] = usersigned_up
             healerspotfound = True
 
@@ -182,9 +182,9 @@ def updateTrialRoster(trial_message, member_to_signup, role_emote):
     for index, value in enumerate(DPS_signedup):
         if (value == "Open") and ((DPSspotfound is False) and (makeBackupDPS is False)) and ((chosen_role == "magdps") or (chosen_role == "stamdps")):
             if chosen_role == "magdps":
-                dps_emoji = magdps_emoji
+                dps_emoji = MAGDPS_EMOJI
             elif chosen_role == "stamdps":
-                dps_emoji = stamdps_emoji
+                dps_emoji = STAMDPS_EMOJI
 
             usersigned_up = (f'{member_to_signup} {dps_emoji}')
             DPS_signedup[index] = usersigned_up
@@ -234,7 +234,7 @@ async def on_ready():
 async def on_message(message):
     # Check if the message author has the Correct Role to Edit and Create Trial rosters Ignore messages that are DMs or from the Bot.
     if message.guild is not None and message.author != client.user:
-        if create_edit_trial_role in [role.name for role in message.author.roles]:
+        if CREATE_EDIT_TRIAL_ROLE in [role.name for role in message.author.roles]:
             userHasPerms = True
         else:
             userHasPerms = False
@@ -253,7 +253,7 @@ async def on_message(message):
 
         channel = await message.author.create_dm()
 
-        await channel.send(pacBotHelpPage)
+        await channel.send(PAC_BOT_HELP_PAGE)
 
         print(f'{timestamp()}, Responded to {message.author} with help page.')
 
@@ -263,7 +263,7 @@ async def on_message(message):
             errorMSG = "You don't have the correct role to create or edit a trial roster"
             channel = await message.author.create_dm()
             await channel.send(errorMSG)
-            print(f'{timestamp()}, {message.author} tried to create a new trial but does not have the role {create_edit_trial_role}.')
+            print(f'{timestamp()}, {message.author} tried to create a new trial but does not have the role {CREATE_EDIT_TRIAL_ROLE}.')
             return
 
         # Regular expression to parse out the arguments after the command.
@@ -296,7 +296,7 @@ async def on_message(message):
         # Create the intial trial post
         title_header = "Pac's Raid Signup Bot has posted " + trial_title + "\n"
 
-        instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {tank_emoji}\nHealer = {heal_emoji}\nMagDPS = {magdps_emoji}\nStamDPS = {stamdps_emoji}\nUnSignup = {unsignup_emoji}\n")
+        instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {TANK_EMOJI}\nHealer = {HEAL_EMOJI}\nMagDPS = {MAGDPS_EMOJI}\nStamDPS = {STAMDPS_EMOJI}\nUnSignup = {UNSIGNUP_EMOJI}\n")
 
         tank_header = ""
         for i in range(tank_count):
@@ -340,7 +340,7 @@ async def on_message(message):
         # Grab the last message posted to discord. That should be what our bot just posted. We need it's ID so we can add the reaction emotes.
         async for last_message in message.channel.history(limit=1):
 
-            default_reactions = [tank_emoji, heal_emoji, stamdps_emoji, magdps_emoji, unsignup_emoji]
+            default_reactions = [TANK_EMOJI, HEAL_EMOJI, STAMDPS_EMOJI, MAGDPS_EMOJI, UNSIGNUP_EMOJI]
             for emoji in default_reactions:
                 await last_message.add_reaction(emoji)
 
@@ -351,7 +351,7 @@ async def on_message(message):
             errorMSG = "You don't have the correct role to create or edit a trial roster"
             channel = await message.author.create_dm()
             await channel.send(errorMSG)
-            print(f'{timestamp()}, {message.author} tried to add/remove someone from trial but does not have the role {create_edit_trial_role}.')
+            print(f'{timestamp()}, {message.author} tried to add/remove someone from trial but does not have the role {CREATE_EDIT_TRIAL_ROLE}.')
             return
 
         AddtoTrial_rex = r'\!AddtoTrial\s(?P<trialid>\d{6})\s*(?P<member_to_signup>\<\@.*?\>)\s*(?P<role_emote>.*)(?:\s|$)'
@@ -439,8 +439,8 @@ async def on_raw_reaction_remove(reaction):
 async def on_member_join(member):
     print(member.name + " has joined " + str(member.guild))
 
-    role = discord.utils.get(member.guild.roles, name=welcome_role_name)
-    channel = discord.utils.get(client.get_all_channels(), name=welcome_channel_name)
+    role = discord.utils.get(member.guild.roles, name=WELCOME_ROLE_NAME)
+    channel = discord.utils.get(client.get_all_channels(), name=WELCOME_CHANNEL_NAME)
 
     welcome_member = f'<@{member.id}>'
 
@@ -452,4 +452,4 @@ async def on_member_join(member):
     print(f'{timestamp()}, The bot welcomed {welcome_member} to the guild.')
 
 
-client.run(token)
+client.run(TOKEN)
