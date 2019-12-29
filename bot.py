@@ -1,3 +1,11 @@
+"""
+This bot is built to provide services to the guild Discord of Pacrooti's Hirelings in the MMORPG Elder Scrolls Online.
+Currently this Bot has two functions, and more may be added later.
+
+* Provides a welcome message and assigns the citizen rank when people join the server.
+* Allows Trial leads to post a roster and let people sign up by reacting to emoji on the roster.
+"""
+
 import os
 import re
 from datetime import datetime
@@ -57,8 +65,7 @@ Example to remove a user named someone from trial 123456
 
 # Function to update the trial roster when people react to emoji, or the !AddtoTrial command is called.
 def update_trial_roster(trial_message, member_to_signup, role_emote):
-
-    # This function is called when we need to update the trial roster with someone signing up or being removed.
+    """This function is called when we need to update the trial roster with someone signing up or being removed."""
 
     if str(role_emote) == TANK_EMOJI:
         chosen_role = "tank"
@@ -212,15 +219,15 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
     return edited_message
 
 
-# Generate a timestamp for our logs.
 def timestamp():
+    """Return the current time as a string for log purposes."""
     now = datetime.now()
     time_stamp = now.strftime("%m/%d/%Y, %H:%M:%S %Z")
     return time_stamp
 
 
-# Function to generate a random Trial ID.
 def get_trial_id():
+    """Generate a random 6 digit Trial ID"""
     trialid = ''.join(["{}".format(randint(0, 9)) for num in range(0, 6)])
     return trialid
 
