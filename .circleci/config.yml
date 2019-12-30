@@ -17,3 +17,6 @@ jobs:
       - run: 
           name: Run Flake8 Linter
           command: flake8 --max-line-length=240 bot.py
+      - run:
+          name: Run Pylint Linter
+          command: pylint bot.py
