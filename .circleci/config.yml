@@ -20,3 +20,6 @@ jobs:
       - run:
           name: Run Pylint Linter
           command: pylint bot.py
+      - run:
+          name: Run Unit Tests
+          command: python -m unittest test_bot.py
