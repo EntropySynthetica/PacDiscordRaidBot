@@ -441,5 +441,5 @@ async def on_member_join(member):
 
     print(f'{timestamp()}, The bot welcomed {welcome_member} to the guild.')
 
-
-client.run(TOKEN)
+if __name__ == '__main__':
+    client.run(TOKEN)
