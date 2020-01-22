@@ -1,0 +1,8 @@
+env/
+.env
+.envprod
+.envdev
+.vscode
+test.py
+__pycache__/
+.coverage
