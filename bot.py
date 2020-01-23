@@ -248,7 +248,7 @@ async def on_message(message):
 
         print(f'{timestamp()}, Responded to {message.author} with help page.')
 
-    # If someone typed the command !NewTrial with incorrect syntax lets throw an error.
+    # Someone typed a message starting with !NewTrial, that is probably for us. 
     elif message.content.startswith('!NewTrial'):
         if user_has_perms is False:
             error_msg = "You don't have the correct role to create or edit a trial roster"
@@ -278,6 +278,7 @@ async def on_message(message):
                 dps_count = 20
 
         else:
+            #If the regular expression didn't match they must of typed the incorrect syntax, lets throw an error. 
             error_msg = "Syntax Error for command !NewTrial.  DM the bot for a command help page."
             channel = await message.author.create_dm()
             await channel.send(error_msg)
@@ -305,8 +306,7 @@ async def on_message(message):
             dps_header = dps_header + "DPS" + str(i) + "=Open\n"
 
         # Assign the Trial an ID number so we can reference it later.
-
-        # Get a list of previous trialIDs in channel so we can check for collision.
+        # First Get a list of previous trialIDs in channel so we can check for collision.
         trialid_history = []
         async for trial_message in message.channel.history():
             trialid_rex = r'TrialID\=(\d{6})'
@@ -337,6 +337,7 @@ async def on_message(message):
 
         print(f'{timestamp()}, Created a trial with {str(tank_count)} Tanks, {str(healer_count)} Healers, and {str(dps_count)} DPS named {trial_title} in channel {message.channel}')
 
+    #Someone typed a message starting with !AddtoTrial, that is probably for us
     elif message.content.startswith('!AddtoTrial'):
         if user_has_perms is False:
             error_msg = "You don't have the correct role to create or edit a trial roster"
@@ -375,6 +376,7 @@ async def on_message(message):
                 print(f'{timestamp()}, {message.author} Addtotrial error, {trialid} not found.')
 
         else:
+            #The regular expression failed to parse so lets assume there was a syntax typo and throw an error. 
             error_msg = "Syntax Error for command !AddtoTrial.  DM the bot for a command help page."
             channel = await message.author.create_dm()
             await channel.send(error_msg)
