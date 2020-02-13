@@ -67,7 +67,7 @@ Example to remove a user named someone from trial 123456
 def update_trial_roster(trial_message, member_to_signup, role_emote):
     """This function is called when we need to update the trial roster with someone signing up or being removed."""
 
-    # Detect what kind of emoji the user reacted with and assign it to a role.  If we don't recognize the emoji set the role to none. 
+    # Detect what kind of emoji the user reacted with and assign it to a role.  If we don't recognize the emoji set the role to none.
     if str(role_emote) == TANK_EMOJI:
         chosen_role = "tank"
     elif str(role_emote) == HEAL_EMOJI:
@@ -205,7 +205,7 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
 
     edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header + "\n" + backup_header + "\n" + trialid_header
 
-    #Pass our edited message out to be sent to disord, unless the users role is none, in which case we pass the unedited message. 
+    # Pass our edited message out to be sent to disord, unless the users role is none, in which case we pass the unedited message.
     if chosen_role != "None":
         return edited_message
 
