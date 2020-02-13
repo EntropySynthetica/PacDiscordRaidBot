@@ -206,7 +206,7 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
     edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header + "\n" + backup_header + "\n" + trialid_header
 
     # Pass our edited message out to be sent to disord, unless the users role is none, in which case we pass the unedited message.
-    if chosen_role != "None":
+    if chosen_role != "None":  # pylint: disable=no-else-return
         return edited_message
 
     else:
