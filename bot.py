@@ -400,12 +400,14 @@ async def on_raw_reaction_add(reaction):
 
         # Figure out what role emoje was clicked
         if message.content.startswith('Pac\'s Raid Signup Bot has posted'):
+
             member_to_signup = (f'<@{reaction.user_id}>')
+            member_to_signup_name = client.get_user(reaction.user_id)
             edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
 
             await message.edit(content=edited_message)
 
-            print(f'{timestamp()}, {member_to_signup} clicked the {reaction.emoji} emoji.')
+            print(f'{timestamp()}, {member_to_signup_name} clicked the {reaction.emoji} emoji.')
 
         else:
             pass
@@ -423,11 +425,12 @@ async def on_raw_reaction_remove(reaction):
         if message.content.startswith('Pac\'s Raid Signup Bot has posted'):
 
             member_to_signup = (f'<@{reaction.user_id}>')
+            member_to_signup_name = client.get_user(reaction.user_id)
             edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
 
             await message.edit(content=edited_message)
 
-            print(f'{timestamp()}, {member_to_signup} un-clicked the {reaction.emoji} emoji.')
+            print(f'{timestamp()}, {member_to_signup_name} un-clicked the {reaction.emoji} emoji.')
 
         else:
             pass
