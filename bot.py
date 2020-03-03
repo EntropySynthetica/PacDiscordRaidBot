@@ -203,7 +203,9 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
     # Add in the TrialID
     trialid_header = ("TrialID=" + str(trialid[0]))
 
-    edited_message = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header + "\n" + backup_header + "\n" + trialid_header
+    edited_message = {}
+    edited_message['message'] = title_header + "\n" + instructions_header + "\n" + tank_header + "\n" + healer_header + "\n" + dps_header + "\n" + backup_header + "\n" + trialid_header
+    edited_message['trialid'] = str(trialid[0])
 
     # Pass our edited message out to be sent to disord, unless the users role is none, in which case we pass the unedited message.
     if chosen_role != "None":  # pylint: disable=no-else-return
@@ -373,7 +375,7 @@ async def on_message(message):
 
                     if trialid_message[0] == trialid:
                         edited_message = update_trial_roster(trial_message, member_to_signup, role_emote)
-                        await trial_message.edit(content=edited_message)
+                        await trial_message.edit(content=edited_message['message'])
 
                         trialid_found = True
                         print(f'{timestamp()}, {message.author} used addtotrial {role_emote} {member_to_signup} to trial {trialid}.')
@@ -405,9 +407,12 @@ async def on_raw_reaction_add(reaction):
             member_to_signup_name = client.get_user(reaction.user_id)
             edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
 
-            await message.edit(content=edited_message)
+            await message.edit(content=edited_message['message'])
+
+            edited_trialid = edited_message['trialid']
 
             print(f'{timestamp()}, {member_to_signup_name} clicked the {reaction.emoji} emoji.')
+            print(f'{timestamp()}, TrialID {edited_trialid} was edited.')
 
         else:
             pass
@@ -428,9 +433,12 @@ async def on_raw_reaction_remove(reaction):
             member_to_signup_name = client.get_user(reaction.user_id)
             edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
 
-            await message.edit(content=edited_message)
+            await message.edit(content=edited_message['message'])
+
+            edited_trialid = edited_message['trialid']
 
             print(f'{timestamp()}, {member_to_signup_name} un-clicked the {reaction.emoji} emoji.')
+            print(f'{timestamp()}, TrialID {edited_trialid} was edited.')
 
         else:
             pass
