@@ -19,8 +19,8 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 TANK_EMOJI = os.getenv('TANK_EMOJI')
 HEAL_EMOJI = os.getenv('HEAL_EMOJI')
-MAGDPS_EMOJI = os.getenv('MAGDPS_EMOJI')
-STAMDPS_EMOJI = os.getenv('STAMDPS_EMOJI')
+RANGED_EMOJI = os.getenv('RANGED_EMOJI')
+MELE_EMOJI = os.getenv('MELE_EMOJI')
 WELCOME_CHANNEL_NAME = os.getenv('WELCOME_CHANNEL_NAME')
 WELCOME_ROLE_NAME = os.getenv('WELCOME_ROLE_NAME')
 CREATE_EDIT_TRIAL_ROLE = os.getenv('CREATE_EDIT_TRIAL_ROLE')
@@ -39,8 +39,8 @@ This bot creates a roster for where folks can sign up for guild trial events.
 emoji twice you will be put on the backup roster for that role.
 Tank Emoji = {TANK_EMOJI}
 Healer Emoji = {HEAL_EMOJI}
-Stam DPS Emoji = {STAMDPS_EMOJI}
-Mag DPS Emoji = {MAGDPS_EMOJI}
+Mele DPS Emoji = {MELE_EMOJI}
+Ranged DPS Emoji = {RANGED_EMOJI}
 Unsignup from Roster Emoji = {UNSIGNUP_EMOJI}
 
 - To create a new trial (requires perms) type the following in the channel you want to the roster to post in.
@@ -72,10 +72,10 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
         chosen_role = "tank"
     elif str(role_emote) == HEAL_EMOJI:
         chosen_role = "healer"
-    elif str(role_emote) == MAGDPS_EMOJI:
-        chosen_role = "magdps"
-    elif str(role_emote) == STAMDPS_EMOJI:
-        chosen_role = "stamdps"
+    elif str(role_emote) == RANGED_EMOJI:
+        chosen_role = "rangeddps"
+    elif str(role_emote) == MELE_EMOJI:
+        chosen_role = "meledps"
     elif str(role_emote) == UNSIGNUP_EMOJI:
         chosen_role = "unsignup"
     else:
@@ -87,7 +87,7 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
 
     title_header = "Pac's Raid Signup Bot has posted " + trial_title[0] + "\n"
 
-    instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {TANK_EMOJI}\nHealer = {HEAL_EMOJI}\nMagDPS = {MAGDPS_EMOJI}\nStamDPS = {STAMDPS_EMOJI}\nUnSignup = {UNSIGNUP_EMOJI}\n")
+    instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {TANK_EMOJI}\nHealer = {HEAL_EMOJI}\nRangedDPS = {RANGED_EMOJI}\nMeleDPS = {MELE_EMOJI}\nUnSignup = {UNSIGNUP_EMOJI}\n")
 
     # Parse Roster of folks already signed up.
     tank_rex = r'Tank\d\=(.*)'
@@ -173,14 +173,14 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
     if ((healer_roster_full is True) and (chosen_role == "healer")) or ((make_backup_healer is True) and (chosen_role == "healer")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
-    # Add user to the DPS roster if they clicked stam or mag DPS emoji.
+    # Add user to the DPS roster if they clicked mele or ranged DPS emoji.
     dps_spot_found = False
     for index, value in enumerate(dps_signedup):
-        if (value == "Open") and ((dps_spot_found is False) and (make_backup_dps is False)) and (chosen_role in ("magdps", "stamdps")):
-            if chosen_role == "magdps":
-                dps_emoji = MAGDPS_EMOJI
-            elif chosen_role == "stamdps":
-                dps_emoji = STAMDPS_EMOJI
+        if (value == "Open") and ((dps_spot_found is False) and (make_backup_dps is False)) and (chosen_role in ("rangeddps", "meledps")):
+            if chosen_role == "rangeddps":
+                dps_emoji = RANGED_EMOJI
+            elif chosen_role == "meledps":
+                dps_emoji = MELE_EMOJI
 
             usersigned_up = (f'{member_to_signup} {dps_emoji}')
             dps_signedup[index] = usersigned_up
@@ -191,7 +191,7 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
         index = index + 1
         dps_header = dps_header + "DPS" + str(index) + "=" + value + "\n"
 
-    if (dps_roster_full is True) and (chosen_role in ("magdps", "stamdps")) or (make_backup_dps is True) and (chosen_role in ("magdps", "stamdps")):
+    if (dps_roster_full is True) and (chosen_role in ("rangeddps", "meledps")) or (make_backup_dps is True) and (chosen_role in ("rangeddps", "meledps")):
         backup_signedup.append(f'{member_to_signup} {role_emote}')
 
     # Add users to Backup Roster if something was full.
@@ -296,7 +296,7 @@ async def on_message(message):
         # Create the intial trial post
         title_header = "Pac's Raid Signup Bot has posted " + trial_title + "\n"
 
-        instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {TANK_EMOJI}\nHealer = {HEAL_EMOJI}\nMagDPS = {MAGDPS_EMOJI}\nStamDPS = {STAMDPS_EMOJI}\nUnSignup = {UNSIGNUP_EMOJI}\n")
+        instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {TANK_EMOJI}\nHealer = {HEAL_EMOJI}\nrangedDPS = {RANGED_EMOJI}\nmeleDPS = {MELE_EMOJI}\nUnSignup = {UNSIGNUP_EMOJI}\n")
 
         tank_header = ""
         for i in range(tank_count):
@@ -339,7 +339,7 @@ async def on_message(message):
         # Grab the last message posted to discord. That should be what our bot just posted. We need it's ID so we can add the reaction emotes.
         async for last_message in message.channel.history(limit=1):
 
-            default_reactions = [TANK_EMOJI, HEAL_EMOJI, STAMDPS_EMOJI, MAGDPS_EMOJI, UNSIGNUP_EMOJI]
+            default_reactions = [TANK_EMOJI, HEAL_EMOJI, MELE_EMOJI, RANGED_EMOJI, UNSIGNUP_EMOJI]
             for emoji in default_reactions:
                 await last_message.add_reaction(emoji)
 
