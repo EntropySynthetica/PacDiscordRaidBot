@@ -296,7 +296,7 @@ async def on_message(message):
         # Create the intial trial post
         title_header = "Pac's Raid Signup Bot has posted " + trial_title + "\n"
 
-        instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {TANK_EMOJI}\nHealer = {HEAL_EMOJI}\nrangedDPS = {RANGED_EMOJI}\nmeleDPS = {MELE_EMOJI}\nUnSignup = {UNSIGNUP_EMOJI}\n")
+        instructions_header = (f"To sign up click the reaction emoji below for your role.\nTank = {TANK_EMOJI}\nHealer = {HEAL_EMOJI}\nRangedDPS = {RANGED_EMOJI}\nMeleDPS = {MELE_EMOJI}\nUnSignup = {UNSIGNUP_EMOJI}\n")
 
         tank_header = ""
         for i in range(tank_count):
