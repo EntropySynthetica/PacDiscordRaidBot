@@ -468,14 +468,20 @@ async def on_raw_reaction_add(reaction):
 
             member_to_signup = (f'<@{reaction.user_id}>')
             member_to_signup_name = client.get_user(reaction.user_id)
-            edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
+            locked_string = "\nTrial_Locked"
 
-            await message.edit(content=edited_message['message'])
+            if locked_string in message.content:
+                pass
 
-            edited_trialid = edited_message['trialid']
+            else:
+                edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
 
-            print(f'{timestamp()}, {member_to_signup_name} clicked the {reaction.emoji} emoji.')
-            print(f'{timestamp()}, TrialID {edited_trialid} was edited.')
+                await message.edit(content=edited_message['message'])
+
+                edited_trialid = edited_message['trialid']
+
+                print(f'{timestamp()}, {member_to_signup_name} clicked the {reaction.emoji} emoji.')
+                print(f'{timestamp()}, TrialID {edited_trialid} was edited.')
 
         else:
             pass
@@ -494,14 +500,20 @@ async def on_raw_reaction_remove(reaction):
 
             member_to_signup = (f'<@{reaction.user_id}>')
             member_to_signup_name = client.get_user(reaction.user_id)
-            edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
+            locked_string = "\nTrial_Locked"
 
-            await message.edit(content=edited_message['message'])
+            if locked_string in message.content:
+                pass
 
-            edited_trialid = edited_message['trialid']
+            else:
+                edited_message = update_trial_roster(message, member_to_signup, reaction.emoji)
 
-            print(f'{timestamp()}, {member_to_signup_name} un-clicked the {reaction.emoji} emoji.')
-            print(f'{timestamp()}, TrialID {edited_trialid} was edited.')
+                await message.edit(content=edited_message['message'])
+
+                edited_trialid = edited_message['trialid']
+
+                print(f'{timestamp()}, {member_to_signup_name} un-clicked the {reaction.emoji} emoji.')
+                print(f'{timestamp()}, TrialID {edited_trialid} was edited.')
 
         else:
             pass
