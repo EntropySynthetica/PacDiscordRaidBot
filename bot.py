@@ -60,6 +60,11 @@ Example to add a user named someome to an existing trial as a healer with an ID 
 Example to remove a user named someone from trial 123456
 **!AddtoTrial 123456 @Someone {UNSIGNUP_EMOJI}**
 
+- To Lock a Trial (requires perms)
+!LockTrial <TrialID>
+
+Lock Trial will toggle the trial between locked and unlocked.  
+
 """
 
 
