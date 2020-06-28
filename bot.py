@@ -231,7 +231,7 @@ def lock_trial_roster(trial_message):
     edited_message = {}
 
     # Trial is already locked, so lets unlock it.
-    if locked_string in trial_message.content:
+    if locked_string in trial_message.content: # pylint: disable=no-else-return
         print(f'{timestamp()}, {trialid} UnLocked.')
         edited_message['message'] = trial_message.content.replace(locked_string, "")
         return edited_message
