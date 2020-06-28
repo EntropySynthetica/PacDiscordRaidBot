@@ -63,7 +63,7 @@ Example to remove a user named someone from trial 123456
 - To Lock a Trial (requires perms)
 !LockTrial <TrialID>
 
-Lock Trial will toggle the trial between locked and unlocked.  
+Lock Trial will toggle the trial between locked and unlocked
 
 """
 
@@ -218,6 +218,7 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
 
     else:
         return trial_message.content
+
 
 def lock_trial_roster(trial_message):
     """This function is called when we need to lock or unlock a trial.  The signup emoji don't work on a locked trial."""
