@@ -214,6 +214,28 @@ def update_trial_roster(trial_message, member_to_signup, role_emote):
     else:
         return trial_message.content
 
+def lock_trial_roster(trial_message):
+    """This function is called when we need to lock or unlock a trial.  The signup emoji don't work on a locked trial."""
+
+    # Parse the Trial ID
+    trialid_rex = r'TrialID\=(\d{6})'
+    trialid = re.findall(trialid_rex, trial_message.content)
+
+    locked_string = "\nTrial_Locked"
+    edited_message = {}
+
+    # Trial is already locked, so lets unlock it.
+    if locked_string in trial_message.content:
+        print("Here we Unlock the trial")
+        edited_message['message'] = trial_message.content.replace(locked_string, "")
+        return edited_message
+
+    # Trial is unlocked, so lets lock it.
+    else:
+        print("here we lock the trial")
+        edited_message['message'] = trial_message.content + locked_string
+        return edited_message
+
 
 def timestamp():
     """Return the current time as a string for log purposes."""
@@ -389,6 +411,47 @@ async def on_message(message):
             channel = await message.author.create_dm()
             await channel.send(error_msg)
             print(f'{timestamp()}, {message.author} Addtotrial error, Message syntax invalid.')
+            return
+
+    elif message.content.startswith('!LockTrial'):
+        if user_has_perms is False:
+            error_msg = "You don't have the correct role to lock a trial roster"
+            channel = await message.author.create_dm()
+            await channel.send(error_msg)
+            print(f'{timestamp()}, {message.author} tried to lock a trial but does not have the role {CREATE_EDIT_TRIAL_ROLE}.')
+            return
+
+        lock_trial_rex = r'\!LockTrial\s(?P<trialid>\d{6})(?:\s|$)'
+        lock_trial_vars = re.search(lock_trial_rex, message.content)
+
+        if lock_trial_vars:
+            trialid = lock_trial_vars.group('trialid')
+
+            trialid_found = False
+            async for trial_message in message.channel.history():
+
+                # Search the message for a Trial ID.
+                trialid_rex = r'TrialID\=(\d{6})'
+                trialid_message = re.findall(trialid_rex, trial_message.content)
+
+                if trialid_message:
+
+                    if trialid_message[0] == trialid:
+                        edited_message = lock_trial_roster(trial_message)
+                        await trial_message.edit(content=edited_message['message'])
+
+                        trialid_found = True
+                        print(f'{timestamp()}, {message.author} used LockTrial to trial {trialid}.')
+
+            if trialid_found is False:
+                print(f'{timestamp()}, {message.author} LockTrial error, {trialid} not found.')
+
+        else:
+            # The regular expression failed to parse so lets assume there was a syntax typo and throw an error.
+            error_msg = "Syntax Error for command !LockTrial.  DM the bot for a command help page."
+            channel = await message.author.create_dm()
+            await channel.send(error_msg)
+            print(f'{timestamp()}, {message.author} LockTrial error, Message syntax invalid.')
             return
 
 # Watch for a emoji reaction.
