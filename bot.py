@@ -226,13 +226,13 @@ def lock_trial_roster(trial_message):
 
     # Trial is already locked, so lets unlock it.
     if locked_string in trial_message.content:
-        print("Here we Unlock the trial")
+        print(f'{timestamp()}, {trialid} UnLocked.')
         edited_message['message'] = trial_message.content.replace(locked_string, "")
         return edited_message
 
     # Trial is unlocked, so lets lock it.
     else:
-        print("here we lock the trial")
+        print(f'{timestamp()}, {trialid} Locked.')
         edited_message['message'] = trial_message.content + locked_string
         return edited_message
 
