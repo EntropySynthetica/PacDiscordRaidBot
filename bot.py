@@ -255,10 +255,12 @@ def get_trial_id():
     trialid = ''.join(["{}".format(randint(0, 9)) for num in range(0, 6)])
     return trialid
 
+
 # Connect the Client to Discord and report back.
 @client.event
 async def on_ready():
     print(f'{timestamp()}, {client.user} has connected to {client.guilds} Discord')
+
 
 # Watch messages on the Discord server for commands the bot cares about.
 @client.event
@@ -460,6 +462,7 @@ async def on_message(message):
             print(f'{timestamp()}, {message.author} LockTrial error, Message syntax invalid.')
             return
 
+
 # Watch for a emoji reaction.
 @client.event
 async def on_raw_reaction_add(reaction):
@@ -492,6 +495,7 @@ async def on_raw_reaction_add(reaction):
         else:
             pass
 
+
 # Watch for removing an emoji reaction.
 @client.event
 async def on_raw_reaction_remove(reaction):
@@ -523,6 +527,7 @@ async def on_raw_reaction_remove(reaction):
 
         else:
             pass
+
 
 # Print Welcome Message and Assign a Role when someone joins the discord.
 @client.event
