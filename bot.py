@@ -13,6 +13,9 @@ from random import randint
 from dotenv import load_dotenv
 import discord
 
+intents = discord.Intents.default() # pylint: disable=invalid-name
+intents.members = True
+
 load_dotenv()
 
 # Load Vars from .env
@@ -25,7 +28,7 @@ WELCOME_CHANNEL_NAME = os.getenv('WELCOME_CHANNEL_NAME')
 WELCOME_ROLE_NAME = os.getenv('WELCOME_ROLE_NAME')
 CREATE_EDIT_TRIAL_ROLE = os.getenv('CREATE_EDIT_TRIAL_ROLE')
 
-client = discord.Client()  # pylint: disable=invalid-name
+client = discord.Client(intents=intents)  # pylint: disable=invalid-name
 
 UNSIGNUP_EMOJI = '🛑'
 
