@@ -13,7 +13,7 @@ from random import randint
 from dotenv import load_dotenv
 import discord
 
-intents = discord.Intents.default() # pylint: disable=invalid-name
+intents = discord.Intents.default()  # pylint: disable=invalid-name
 intents.members = True
 
 load_dotenv()
