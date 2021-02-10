@@ -2,12 +2,15 @@ version: 2
 jobs:
   build:
     docker:
-      - image: python:3.8.6-alpine3.11
+      - image: python:3.8.7-alpine3.13
 
     working_directory: /app
 
     steps:
       - checkout
+      - run: 
+          name: Install GCC
+          command: apk add build-base
       - run: 
           name: Install requirements for pylint to install
           command: python3 -c 'import sys; f = open("/usr/local/lib/python3.8/site-packages/_manylinux.py", "w"); f.write("manylinux1_compatible = True"); f.close()'
